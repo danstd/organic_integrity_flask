@@ -4,6 +4,8 @@ import requests
 import json
 from api_key_get import key_get
 import xml.etree.ElementTree as ET
+import xmltodict
+import integrity_model
 
 app = Flask(__name__)
 app.debug = True
@@ -36,8 +38,8 @@ def index():
 
 
 def integrity_request():
-    my_key = key_get("integrity")
-    base_url = "https://organicapi.ams.usda.gov/IntegrityPubDataServices/OidPublicDataService.svc/rest/Operations?api_key=" + my_key
+    MY_KEY = key_get("integrity")
+    base_url = "https://organicapi.ams.usda.gov/IntegrityPubDataServices/OidPublicDataService.svc/rest/Operations?api_key=" + MY_KEY
     # end_point = base_url + "?" + get_string + "&" + for_pred
     end_point = base_url
     # res = requests.get(end_point)
@@ -50,7 +52,19 @@ def integrity_request():
     if res.status_code != 200:
         return "ERROR: API request unsuccessful."
     else:
-        return res.text
+        #return res.text
+        # XML handling from https://primates.dev/how-to-parse-an-xml-with-python/
+        #root = ET.fromstring(res.content)
+        #print(res.content)
+        #xmlDict = {}
+        #for sitemap in root:
+        #    children = list(sitemap)
+        #    if len(children) > 1:
+        #        xmlDict[children[0].text] = children[1].text
+        #return xmlDict
+        dict_data = xmltodict.parse(res.content)
+        print(dict_data.keys())
+        return dict_data
 
 
 def census_request(fips_selection=None):
