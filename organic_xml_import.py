@@ -23,7 +23,7 @@ def xml_to_pd(xml_data, subroot_name, col_list):
 
 
 # Read in the xml file.
-tree = ET.parse("C:\\Users\\stoandel\\Documents\\python_programming\\organic_integrity\\integrity_download\\stream.xml")
+tree = ET.parse("integrity_download\\stream.xml")
 
 root = tree.getroot()
 
