@@ -1,8 +1,10 @@
-load data local infile 'C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\organic_operations.csv' into table organic_integrity.organic_operation fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
 
- load data local infile '/home/ddavis11/organic/organic_operations.csv' into table organic_operation fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+# For initial python anywhere set up.
 
+load data local infile '/home/ddavis11/organic/organic_operations.csv' into table organic_operation fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+load data local infile '/home/ddavis11/organic/organic_itemss.csv' into table organic_item fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
 --------------------------------LOCAL-----------------------------------------------------
+# For local environment.
 
 set session sql_mode = '';
 set session sql_mode = 'NO_ENGINE_SUBSTITUTION';
