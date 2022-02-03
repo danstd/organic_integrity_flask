@@ -107,27 +107,7 @@ operations = xml_to_pd(root[0], "Operation", op_cols.keys())
 # Extract the item level data.
 items = xml_to_pd(root[1], "Item", item_cols)
 
-# Check the results are of the expected length.
-# The operation-level data specifically should only go up over time.
-
-if len(operations) < 68000 or len(items) < 460000:
-    # Set up a log for tracking.
-    print("XML did not contain expected data!")
-    sys.exit()
-
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
-    username="integrity_update",
-    password="dersAGef3rover",
-    hostname="127.0.0.1",
-    databasename="organic_integrity",
-)
-
-
-engine = create_engine(SQLALCHEMY_DATABASE_URI)
-
-operations.to_sql(name="organic_operations", con=engine, schema="organic_integrity", if_exists="replace", index=False)
-items.to_sql(name="organic_items", con=engine, schema="organic_integrity", if_exists="replace", index=False)
-
-#items.to_csv("organic_items.csv", index=False)
-#operations.to_csv("organic_operations.csv", index=False)
+# Export the results as csv files.
+items.to_csv("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Data\\organic_integrity\\organic_items.csv", index=False, errors = "surrogateescape")
+operations.to_csv("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Data\\organic_integrity\\organic_operations.csv", index=False, errors = "surrogateescape")
 
