@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 import xmltodict
 from collections import OrderedDict
 from flask_sqlalchemy import SQLAlchemy
+import pandas as pd
 
 app = Flask(__name__)
 app.debug = True
@@ -34,17 +35,27 @@ def index():
     else:
         # Query to get number of operations by status and by country
         op_return = db.session.query(
-            OrganicOperation.opPA_country,
+            OrganicOperation.opPA_country.label("Country"),
             OrganicOperation.op_status,
-            db.func.count(OrganicOperation.op_nopOpID)
+            db.func.count(OrganicOperation.op_nopOpID).label("op_count")
         ).select_from(OrganicOperation).order_by(OrganicOperation.opPA_country).group_by(
             OrganicOperation.opPA_country,
-            OrganicOperation.op_status,)
+            OrganicOperation.op_status)
 
+        df_pivot = pd.DataFrame(op_return).pivot_table(index="Country", 
+                                          columns="op_status", 
+                                          values="op_count",
+                                          aggfunc="sum", fill_value=0,
+                                         margins=True)
+        df_pivot.reset_index(inplace=True)
 
+        df_cols = df_pivot.columns.tolist()
+
+        # For dataframe to html: https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table
         return render_template(
             "main_page.html",
-            organic_display=op_return
+            organic_display=df_pivot.values.tolist(),
+            organic_cols=df_cols
         )
 
 # Models
