@@ -23,6 +23,11 @@
 	p.padding_left {
 	  padding-left: 5%;
 	}
+	.table-responsive {
+    max-height:500px;
+	max_width: 500px;
+}
+
 	</style>
     </head>
 
@@ -41,24 +46,22 @@
         </div>
 		{% if organic_display %}
 		<p class="padding_left">Organic Operations By Country</p>
-		<div class="col-sm-4">
-			<table class="table table-hover">
-				<thead>
-					<th>Country</th>
-					<th>Certification Status</th>
-					<th>Number of Companies</th>
+			<table class="table table-responsive table-hover" style="font-size: 8px; width: 40%">
+				<thead style="position: sticky; background-color: white; top: 0">
+					{% for col in organic_cols %}
+						<th>{{ col }}</th>
+					{% endfor %}
 				</thead>
-				<tbody>
+				<tbody style="margin-top: 16px">
 					{% for country in organic_display %}
-					<tr>
-						<td>{{country.opPA_country}}</td>
-						<td>{{country.op_status}}</td>
-						<td>{{country.op_count}}</td>
-					</tr>
+						<tr style">
+							{% for attribute in country %}
+								<td>{{ attribute}}</td>
+							{% endfor %}
+						</tr>
 					{% endfor %}
 				</tbody>
-			</table>
-		</div>	
+		</div>
 		{% endif %}
     </body>
 </html>
