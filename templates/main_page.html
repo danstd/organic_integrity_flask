@@ -19,6 +19,11 @@
 		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.5.1/js/bootstrap.min.js"></script> -->
 
         <title>Organic Integrity</title>
+	<style>
+	p.padding_left {
+	  padding-left: 5%;
+	}
+	</style>
     </head>
 
     <body>
@@ -34,16 +39,26 @@
                   <button type="submit" class="btn btn-success">Submit</button>
                 </form>
         </div>
-        {% if organic_display %}
-        <div class="container-xl overflow-y: scroll">
-            {% for value in organic_display %}
-                <div class="row no-gutters small">
-                    {% for i in value %}
-                          <div class="col no-gutters small">{{ i }}</div>
-                        {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+		{% if organic_display %}
+		<p class="padding_left">Organic Operations By Country</p>
+		<div class="col-sm-4">
+			<table class="table table-hover">
+				<thead>
+					<th>Country</th>
+					<th>Certification Status</th>
+					<th>Number of Companies</th>
+				</thead>
+				<tbody>
+					{% for country in organic_display %}
+					<tr>
+						<td>{{country.opPA_country}}</td>
+						<td>{{country.op_status}}</td>
+						<td>{{country.op_count}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>	
+		{% endif %}
     </body>
 </html>
