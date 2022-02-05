@@ -2,11 +2,16 @@ from flask import Flask, redirect, render_template, request, url_for
 import requests
 import json
 from api_key_get import key_get
-import xml.etree.ElementTree as ET
-import xmltodict
-from collections import OrderedDict
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
+import seaborn as sns
+import datetime
+import matplotlib.pyplot as plt
+import io
+import base64
+
+# Set plot parameters
+plt.rcParams.update({"font.size": 22})
 
 app = Flask(__name__)
 app.debug = True
@@ -28,9 +33,10 @@ db = SQLAlchemy(app)
 #login_manager.init_app(app)
 #migrate = Migrate(app, db)
 
-@app.route("/", methods=["GET", "POST"])
+#@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
-    if request.method == "GET":
+    if request.method != "GET":
         return render_template("main_page.html")
     else:
         # Query to get number of operations by status and by country
@@ -47,15 +53,48 @@ def index():
                                           values="op_count",
                                           aggfunc="sum", fill_value=0,
                                          margins=True)
+        
         df_pivot.reset_index(inplace=True)
 
         df_cols = df_pivot.columns.tolist()
 
-        # For dataframe to html: https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table
+        # Create certification change plot.
+        certification_date = db.session.query(
+            OrganicOperation.op_statusEffectiveDate,
+            OrganicOperation.op_status,
+            db.func.count(OrganicOperation.op_nopOpID).label("op_count")
+            ).select_from(OrganicOperation).group_by(
+            OrganicOperation.op_statusEffectiveDate,
+            OrganicOperation.op_status)
+        
+        cert_date_df = pd.DataFrame(certification_date)
+
+        cert_date_df["year"] = pd.DatetimeIndex(cert_date_df["op_statusEffectiveDate"]).year
+
+        cert_date_df = cert_date_df.rename(columns={"op_status": "Certification Status"})
+        # Further aggregate by month
+        cert_date_df["op_statusEffectiveDate"] = cert_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
+
+        cert_date_df = cert_date_df.loc[cert_date_df["year"] > datetime.datetime.now().year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum()
+
+        sns.set_style("darkgrid")
+        sns.set_palette("Set3")
+        sns.relplot(data=cert_date_df, x="op_statusEffectiveDate", y="op_count", kind="line", hue="Certification Status",height=10, aspect=1.5, linewidth=3)
+
+        plt.title("Certification Changes Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Monthly Change")
+
+        #plt.show()
+        # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
+        status_date_url = "static\\images\\certification_date.png"
+        plt.savefig(status_date_url, bbox_inches="tight", pad_inches=0.3)
+
         return render_template(
             "main_page.html",
             organic_display=df_pivot.values.tolist(),
-            organic_cols=df_cols
+            organic_cols=df_cols,
+            status_date_url=status_date_url
         )
 
 # Models
