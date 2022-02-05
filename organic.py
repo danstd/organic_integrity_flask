@@ -39,7 +39,7 @@ def index():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
-        # Query to get number of operations by status and by country
+    # Query to get number of operations by status and by country
         op_return = db.session.query(
             OrganicOperation.opPA_country.label("Country"),
             OrganicOperation.op_status,
@@ -48,17 +48,17 @@ def index():
             OrganicOperation.opPA_country,
             OrganicOperation.op_status)
 
-        df_pivot = pd.DataFrame(op_return).pivot_table(index="Country", 
+        country_pivot = pd.DataFrame(op_return).pivot_table(index="Country", 
                                           columns="op_status", 
                                           values="op_count",
                                           aggfunc="sum", fill_value=0,
                                          margins=True)
         
-        df_pivot.reset_index(inplace=True)
+        country_pivot.reset_index(inplace=True)
 
-        df_cols = df_pivot.columns.tolist()
+        country_table_cols = country_pivot.columns.tolist()
 
-        # Create certification change plot.
+    # Create certification change plot.
         certification_date = db.session.query(
             OrganicOperation.op_statusEffectiveDate,
             OrganicOperation.op_status,
@@ -85,16 +85,38 @@ def index():
         plt.xlabel("Date")
         plt.ylabel("Monthly Change")
 
-        #plt.show()
         # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
         status_date_url = "static\\images\\certification_date.png"
         plt.savefig(status_date_url, bbox_inches="tight", pad_inches=0.3)
 
+
+    # Query to get number of operations by status and by state for US (and outlying islands)
+        us_return = db.session.query(
+            OrganicOperation.opPA_state.label("State"),
+            OrganicOperation.op_status,
+            db.func.count(OrganicOperation.op_nopOpID).label("op_count")
+        ).select_from(OrganicOperation).order_by(OrganicOperation.opPA_state).group_by(
+            OrganicOperation.opPA_state,
+            OrganicOperation.op_status).filter(OrganicOperation.opPA_country.like("%United States%")).all()
+
+        us_pivot = pd.DataFrame(us_return).pivot_table(index="State", 
+                                          columns="op_status", 
+                                          values="op_count",
+                                          aggfunc="sum", fill_value=0,
+                                         margins=True)
+        
+        us_pivot.reset_index(inplace=True)
+
+        us_table_cols = us_pivot.columns.tolist()
+
+        
         return render_template(
             "main_page.html",
-            organic_display=df_pivot.values.tolist(),
-            organic_cols=df_cols,
-            status_date_url=status_date_url
+            country_table=country_pivot.values.tolist(),
+            country_table_cols=country_table_cols,
+            status_date_url=status_date_url,
+            us_table=us_pivot.values.tolist(),
+            us_table_cols=us_table_cols
         )
 
 # Models
