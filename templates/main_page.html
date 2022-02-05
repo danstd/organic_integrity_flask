@@ -45,36 +45,62 @@
                   <button type="submit" class="btn btn-success">Submit</button>
                 </form>
         </div> -->
-		{% if organic_display %}
+		{% if country_table %}
 		<div class="container-fluid">
-		<div class="jumbotron">
-			<h3 style="text-align:center;">Organic Certification Status Counts and Trends</h3>
-		</div>
-		<div class="row">
-			<div class="col-lg-6">
-				<!--<p class="padding_left">Organic Operations By Country</p> -->
-				<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
-					<thead style="position: sticky; background-color: white; top: 0">
-						{% for col in organic_cols %}
-							<th>{{ col }}</th>
-						{% endfor %}
-					</thead>
-					<tbody style="margin-top: 16px">
-						{% for country in organic_display %}
-							<tr style">
-								{% for attribute in country %}
-									<td>{{ attribute}}</td>
-								{% endfor %}
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+			<div class="jumbotron bg-info text-white"">
+				<h3 style="text-align:center;">Organic Certification Status Counts and Trends</h3>
 			</div>
-			<div class="col-lg-6">
-				<img class="img-responsive" src={{ status_date_url}} alt="Chart" style="width:100%">
-			</div>	
+			<div class="row">
+				<!--Organic Operations By Country< Table-->
+				<div class="col-lg-6">
+					<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
+						<thead style="position: sticky; background-color: white; top: 0">
+							{% for col in country_table_cols %}
+								<th>{{ col }}</th>
+							{% endfor %}
+						</thead>
+						<tbody style="margin-top: 16px">
+							{% for country in country_table %}
+								<tr style">
+									{% for attribute in country %}
+										<td>{{ attribute}}</td>
+									{% endfor %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<!-- Certification Trends Plot -->
+				<div class="col-lg-6">
+					<img class="img-responsive" src={{ status_date_url}} alt="Chart" style="width:100%">
+				</div>	
+			</div>
+			<div container-fluid class="bg-info text-white">
+				<p style="text-align:center;">Organic Certification Status Counts and Trends - United States</p>
+			</div>
+			<div class="row">
+				<!--US Organic Operations By State< Table-->
+				<div class="col-lg-6">
+					<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
+						<thead style="position: sticky; background-color: white; top: 0">
+							{% for col in us_table_cols %}
+								<th>{{ col }}</th>
+							{% endfor %}
+						</thead>
+						<tbody style="margin-top: 16px">
+							{% for state in us_table %}
+								<tr style">
+									{% for attribute in state %}
+										<td>{{ attribute}}</td>
+									{% endfor %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
-		</div>
+		
 		{% endif %}
 		</body>
 		<!-- Footer -->
@@ -85,11 +111,11 @@
 					<a class="font-weight-bold small kf-blue kf-links" href="https://github.com/danstd/organic_integrity_flask">Github</a> |
                     <a class="font-weight-bold small kf-blue kf-links" href="https://organic.ams.usda.gov/Integrity/Developer/APIHelp.aspx">Organic Integrity</a>
                 </div>
-				<div class="align-middle small">
-					<p><i>This product uses USDA’s Organic Integrity Database API but is not endorsed or certified by USDA.</i></p>
+				<div class="align-middle">
+					<i>This product uses USDA’s Organic Integrity Database API but is not endorsed or certified by USDA.</i>
 				</div>
-                <div class="align-right small">
-					<a class="font-weight-bold kf-blue kf-links" href="mailto:danielst.davis@gmail.com">Contact</a>
+                <div class="align-right">
+					<a class="font-weight-bold small kf-blue kf-links" href="mailto:danielst.davis@gmail.com">Contact</a>
                 </div>
             </div>
         </footer>
