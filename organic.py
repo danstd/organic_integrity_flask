@@ -109,6 +109,102 @@ def index():
 
         us_table_cols = us_pivot.columns.tolist()
 
+    # Query to get number of certified operations by scope for the US.
+        # Unsure how to optimize using sqlalchemy
+        # States subquery b/c lack of outer join
+        states_sub = db.session.query(
+            db.func.distinct(OrganicOperation.opPA_state
+            ).label("State")).select_from(OrganicOperation
+            ).filter(OrganicOperation.opPA_country.like("%United States%")).subquery()
+
+        # Handling subquery
+        handling_sub = db.session.query(
+            OrganicOperation.opPA_state,
+            db.func.count(OrganicOperation.opSC_HANDLING).label("Handling")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opPA_country.like("%United States%")
+            ).filter(OrganicOperation.opSC_HANDLING == "Certified"
+            ).group_by(OrganicOperation.opPA_state
+            ).subquery()
+
+        # Crops subquery
+        crops_sub = db.session.query(
+            OrganicOperation.opPA_state,
+            db.func.count(OrganicOperation.opSC_CR).label("Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opPA_country.like("%United States%")
+            ).filter(OrganicOperation.opSC_CR == "Certified"
+            ).group_by(OrganicOperation.opPA_state
+            ).subquery()
+
+        # Livestock subquery
+        livestock_sub = db.session.query(
+            OrganicOperation.opPA_state,
+            db.func.count(OrganicOperation.opSC_LS).label("Livestock")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opPA_country.like("%United States%")
+            ).filter(OrganicOperation.opSC_LS == "Certified"
+            ).group_by(OrganicOperation.opPA_state
+            ).subquery()
+
+        # Wild crops subquery
+        wild_sub = db.session.query(
+            OrganicOperation.opPA_state,
+            db.func.count(OrganicOperation.opSC_WC).label("Wild_Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opPA_country.like("%United States%")
+            ).filter(OrganicOperation.opSC_WC == "Certified"
+            ).group_by(OrganicOperation.opPA_state
+            ).subquery()
+
+        # Outer query
+        us_scopes_return = db.session.query(
+            states_sub.c.State,
+            handling_sub.c.Handling,
+            crops_sub.c.Crops,
+            livestock_sub.c.Livestock,
+            wild_sub.c.Wild_Crops
+            ).select_from(states_sub
+            ).join(handling_sub, states_sub.c.State == handling_sub.c.opPA_state, isouter=True
+            ).join(crops_sub, states_sub.c.State == crops_sub.c.opPA_state, isouter=True
+            ).join(livestock_sub, states_sub.c.State == livestock_sub.c.opPA_state, isouter=True
+            ).join(wild_sub, states_sub.c.State == wild_sub.c.opPA_state, isouter=True
+            ).group_by(states_sub.c.State
+            ).all()
+
+
+    # Create US certification change plot.
+        us_date = db.session.query(
+            OrganicOperation.op_statusEffectiveDate,
+            OrganicOperation.op_status,
+            db.func.count(OrganicOperation.op_nopOpID).label("op_count")
+            ).select_from(OrganicOperation).group_by(
+            OrganicOperation.op_statusEffectiveDate,
+            OrganicOperation.op_status
+            ).filter(OrganicOperation.opPA_country.like("%United States%")).all()
+        
+        us_date_df = pd.DataFrame(us_date)
+
+        us_date_df["year"] = pd.DatetimeIndex(us_date_df["op_statusEffectiveDate"]).year
+
+        us_date_df = us_date_df.rename(columns={"op_status": "Certification Status"})
+        # Further aggregate by month
+        us_date_df["op_statusEffectiveDate"] = us_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
+
+        us_date_df = us_date_df.loc[us_date_df["year"] > datetime.datetime.now().year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum()
+
+        sns.set_style("darkgrid")
+        sns.set_palette("Set3")
+        sns.relplot(data=us_date_df, x="op_statusEffectiveDate", y="op_count", kind="line", hue="Certification Status",height=10, aspect=1.5, linewidth=3)
+
+        plt.title("U.S. Certification Changes Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Monthly Change")
+
+        # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
+        us_date_url = "static\\images\\us_certification_date.png"
+        plt.savefig(us_date_url, bbox_inches="tight", pad_inches=0.3)
+
         
         return render_template(
             "main_page.html",
@@ -116,7 +212,9 @@ def index():
             country_table_cols=country_table_cols,
             status_date_url=status_date_url,
             us_table=us_pivot.values.tolist(),
-            us_table_cols=us_table_cols
+            us_table_cols=us_table_cols,
+            us_scopes_display=us_scopes_return,
+            us_date_url=us_date_url
         )
 
 # Models
@@ -160,7 +258,7 @@ class OrganicOperation(db.Model):
     op_phone = db.Column(db.String(256))
     op_email = db.Column(db.String(256))
     op_url = db.Column(db.String(256))
-    op_opExtraInfo = db.Column(db.String(256))
+    # op_opExtraInfo = db.Column(db.String(256))
     opEx_broker = db.Column(db.String(256))
     opEx_csa = db.Column(db.String(256))
     opEx_copacker = db.Column(db.String(256))
