@@ -78,9 +78,21 @@
 			<div container-fluid class="bg-info text-white">
 				<p style="text-align:center;">Organic Certification Status Counts and Trends - United States</p>
 			</div>
+			<!-- Headers for next section -->
+			<div class="row">
+				<div class="col-lg-4">
+					<p style="text-align:center;">US Organic Operations By State</p>
+				</div>
+				<div class="col-lg-3">
+					<p style="text-align:center;">US Certified Scopes By State</p>
+				</div>
+				<div class="col-lg-5">
+					<p style="text-align:center;">US Monthly Certification Status Change</p>
+				</div>
+			</div>
 			<div class="row">
 				<!--US Organic Operations By State< Table-->
-				<div class="col-lg-6">
+				<div class="col-lg-4">
 					<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
 						<thead style="position: sticky; background-color: white; top: 0">
 							{% for col in us_table_cols %}
@@ -97,6 +109,31 @@
 							{% endfor %}
 						</tbody>
 					</table>
+				</div>
+				<!--US Organic Scopes Count By State< Table-->
+				<div class="col-lg-3">
+					<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
+						<thead style="position: sticky; background-color: white; top: 0">
+							<th>State</th>
+							<th>Handling</th>
+							<th>Crops</th>
+							<th>Livestock</th>
+							<th>Wild Crops</th>
+						</thead>
+						<tbody style="margin-top: 16px">
+							{% for state in us_scopes_display %}
+								<tr style">
+									{% for attribute in state %}
+										<td>{{ attribute}}</td>
+									{% endfor %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<!-- US Certification Trends Plot -->
+				<div class="col-lg-5">
+					<img class="img-responsive" src={{ us_date_url}} alt="Chart" style="width:100%">
 				</div>
 			</div>
 		</div>
