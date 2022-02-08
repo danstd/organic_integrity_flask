@@ -39,6 +39,60 @@ def index():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
+    # Global certification scope pie chart get
+    # Subqueries
+        handling_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_HANDLING
+            ).label("Handling")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_HANDLING == "Certified"
+            )
+
+        crops_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_CR
+            ).label("Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_CR == "Certified"
+            )
+
+        livestock_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_LS
+            ).label("Livestock")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_LS == "Certified"
+            )
+
+        wild_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_WC
+            ).label("Wild_Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_WC == "Certified"
+            )
+
+        # Union for single call to db.
+        scopes_return = (handling_count
+            ).union(crops_count
+            ).union(livestock_count
+            ).union(wild_count
+            ).all()
+
+        # Extract counts by scope.
+        scopes = ["Handling", "Crops", "Livestock", "Wild Crops"]
+        scopes_count = dict()
+        for i in range(0,len(scopes)):
+            scopes_count[scopes[i]]= scopes_return[i][0]
+    
+        
+        return render_template(
+            "main_page.html",
+            scopes_display=scopes_count
+        )
+
+@app.route("/world", methods=["GET"])
+def world():
+    if request.method != "GET":
+        return render_template("main_page.html")
+    else:
     # Query to get number of operations by status and by country
         op_return = db.session.query(
             OrganicOperation.opPA_country.label("Country"),
@@ -89,7 +143,18 @@ def index():
         status_date_url = "static\\images\\certification_date.png"
         plt.savefig(status_date_url, bbox_inches="tight", pad_inches=0.3)
 
+        
+        return render_template(
+            "world.html",
+            country_table=country_pivot.values.tolist(),
+            country_table_cols=country_table_cols,
+            status_date_url=status_date_url)
 
+@app.route("/united_states", methods=["GET"])
+def united_states():
+    if request.method != "GET":
+        return render_template("main_page.html")
+    else:
     # Query to get number of operations by status and by state for US (and outlying islands)
         us_return = db.session.query(
             OrganicOperation.opPA_state.label("State"),
@@ -207,15 +272,11 @@ def index():
 
         
         return render_template(
-            "main_page.html",
-            country_table=country_pivot.values.tolist(),
-            country_table_cols=country_table_cols,
-            status_date_url=status_date_url,
+            "united_states.html",
             us_table=us_pivot.values.tolist(),
             us_table_cols=us_table_cols,
             us_scopes_display=us_scopes_return,
-            us_date_url=us_date_url
-        )
+            us_date_url=us_date_url)
 
 # Models
 class OrganicOperation(db.Model):
