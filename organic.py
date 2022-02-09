@@ -39,95 +39,9 @@ def index():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
-    # Global certification scope pie chart get
-    # Subqueries
-        handling_count = db.session.query(
-            db.func.count(OrganicOperation.opSC_HANDLING
-            ).label("Handling")
-            ).select_from(OrganicOperation
-            ).filter(OrganicOperation.opSC_HANDLING == "Certified"
-            )
-
-        crops_count = db.session.query(
-            db.func.count(OrganicOperation.opSC_CR
-            ).label("Crops")
-            ).select_from(OrganicOperation
-            ).filter(OrganicOperation.opSC_CR == "Certified"
-            )
-
-        livestock_count = db.session.query(
-            db.func.count(OrganicOperation.opSC_LS
-            ).label("Livestock")
-            ).select_from(OrganicOperation
-            ).filter(OrganicOperation.opSC_LS == "Certified"
-            )
-
-        wild_count = db.session.query(
-            db.func.count(OrganicOperation.opSC_WC
-            ).label("Wild_Crops")
-            ).select_from(OrganicOperation
-            ).filter(OrganicOperation.opSC_WC == "Certified"
-            )
-
-        # Union for single call to db.
-        scopes_return = (handling_count
-            ).union(crops_count
-            ).union(livestock_count
-            ).union(wild_count
-            ).all()
-
-        # Extract counts by scope.
-        scopes = ["Handling", "Crops", "Livestock", "Wild Crops"]
-        scopes_count = dict()
-        for i in range(0,len(scopes)):
-            scopes_count[scopes[i]]= scopes_return[i][0]
-    
-    # Get certified count combinations
-        # Get all scope certification columns
-        scope_set = db.session.query(
-            OrganicOperation.opSC_HANDLING,
-            OrganicOperation.opSC_CR,
-            OrganicOperation.opSC_LS,
-            OrganicOperation.opSC_WC,
-            ).select_from(OrganicOperation
-            ).all()
-        # Make a dataframe and drop any certifications that are not certified at all.
-        scope_set = pd.DataFrame(scope_set, columns=["H", "C", "L", "W"])
-
-        scope_set = scope_set.loc[
-            (scope_set["H"] == "Certified") |
-            (scope_set["C"] == "Certified") |
-            (scope_set["L"] == "Certified") |
-            (scope_set["W"] == "Certified")
-        ]
-
-        # Make a pseudo sparse matrix
-        scope_cols = scope_set.columns.tolist()
-        for i in scope_cols:
-            scope_set[i] = scope_set[i].str.replace("Surrendered","")
-            scope_set[i] = scope_set[i].str.replace("Suspended","")
-            scope_set[i] = scope_set[i].str.replace("Certified",i)
-
-        # Group the combinations.
-        scope_set = scope_set.groupby(["H", "C", "L", "W"], as_index=False).size()
-        # Make a name column with meaning for the combinations.
-        #scope_set["Name"] = scope_set["H"] +  ", " + scope_set["C"] + ", " + scope_set["L"] + ", " + scope_set["W"]
-        #scope_set["Name"] = scope_set["Name"].str.replace(r'^(, )+|(, )+$', "", regex=True)
-        #scope_set["Name"] = scope_set["Name"].str.replace(r'(, )+', ", ", regex=True)
-
-        # Get the percentage of each combination.
-        total = sum(scope_set["size"])
-
-        scope_set["size"] = round(((scope_set["size"] / total)* 100),3)
-
-        scope_set.sort_values("size", ascending=False, inplace=True)
         
         return render_template(
-            "main_page.html",
-            scopes_display=scopes_count,
-            scopes_combo=scope_set.values.tolist(),
-            scopes_combo_cols=["Handling", "Crops", "Livestock", "Wild Crops", "Percentage"]
-        )
+            "main_page.html")
         
 
 @app.route("/world", methods=["GET"])
@@ -135,6 +49,7 @@ def world():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
+        
     # Query to get number of operations by status and by country
         op_return = db.session.query(
             OrganicOperation.opPA_country.label("Country"),
@@ -144,11 +59,12 @@ def world():
             OrganicOperation.opPA_country,
             OrganicOperation.op_status)
 
-        country_pivot = pd.DataFrame(op_return).pivot_table(index="Country", 
-                                          columns="op_status", 
-                                          values="op_count",
-                                          aggfunc="sum", fill_value=0,
-                                         margins=True)
+        country_pivot = pd.DataFrame(op_return).pivot_table(
+            index="Country", 
+            columns="op_status", 
+            values="op_count",
+            aggfunc="sum", fill_value=0,
+            margins=True)
         
         country_pivot.reset_index(inplace=True)
 
@@ -185,12 +101,93 @@ def world():
         status_date_url = "static\\images\\certification_date.png"
         plt.savefig(status_date_url, bbox_inches="tight", pad_inches=0.3)
 
+    # Global certification scope get
+    # Subqueries
+        handling_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_HANDLING
+            ).label("Handling")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_HANDLING == "Certified")
+
+        crops_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_CR
+            ).label("Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_CR == "Certified")
+
+        livestock_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_LS
+            ).label("Livestock")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_LS == "Certified")
+
+        wild_count = db.session.query(
+            db.func.count(OrganicOperation.opSC_WC
+            ).label("Wild_Crops")
+            ).select_from(OrganicOperation
+            ).filter(OrganicOperation.opSC_WC == "Certified")
+
+        # Union for single call to db.
+        scopes_return = (handling_count
+            ).union(crops_count
+            ).union(livestock_count
+            ).union(wild_count
+            ).all()
+
+        # Extract counts by scope.
+        scopes = ["Handling", "Crops", "Livestock", "Wild Crops"]
+        scopes_count = dict()
+        for i in range(0,len(scopes)):
+            scopes_count[scopes[i]]= scopes_return[i][0]
+    
+    # Get certified count combinations
+        # Get all scope certification columns
+        scope_set = db.session.query(
+            OrganicOperation.opSC_HANDLING,
+            OrganicOperation.opSC_CR,
+            OrganicOperation.opSC_LS,
+            OrganicOperation.opSC_WC,
+            ).select_from(OrganicOperation
+            ).all()
+        # Make a dataframe and drop any certifications that are not certified at all.
+        scope_set = pd.DataFrame(scope_set, columns=["H", "C", "L", "W"])
+
+        scope_set = scope_set.loc[
+            (scope_set["H"] == "Certified") |
+            (scope_set["C"] == "Certified") |
+            (scope_set["L"] == "Certified") |
+            (scope_set["W"] == "Certified")]
+
+        # Make a pseudo sparse matrix
+        scope_cols = scope_set.columns.tolist()
+        for i in scope_cols:
+            scope_set[i] = scope_set[i].str.replace("Surrendered","")
+            scope_set[i] = scope_set[i].str.replace("Suspended","")
+            scope_set[i] = scope_set[i].str.replace("Certified",i)
+
+        # Group the combinations.
+        scope_set = scope_set.groupby(["H", "C", "L", "W"], as_index=False).size()
+        # Make a name column with meaning for the combinations.
+        #scope_set["Name"] = scope_set["H"] +  ", " + scope_set["C"] + ", " + scope_set["L"] + ", " + scope_set["W"]
+        #scope_set["Name"] = scope_set["Name"].str.replace(r'^(, )+|(, )+$', "", regex=True)
+        #scope_set["Name"] = scope_set["Name"].str.replace(r'(, )+', ", ", regex=True)
+
+        # Get the percentage of each combination.
+        total = sum(scope_set["size"])
+
+        scope_set["size"] = round(((scope_set["size"] / total)* 100),3)
+
+        scope_set.sort_values("size", ascending=False, inplace=True)
         
         return render_template(
             "world.html",
             country_table=country_pivot.values.tolist(),
             country_table_cols=country_table_cols,
-            status_date_url=status_date_url)
+            status_date_url=status_date_url,
+            scopes_display=scopes_count,
+            scopes_combo=scope_set.values.tolist(),
+            scopes_combo_cols=["Handling", "Crops", "Livestock", "Wild Crops", "Percentage"])
+
 
 @app.route("/united_states", methods=["GET"])
 def united_states():
@@ -295,6 +292,7 @@ def united_states():
         us_date_df["year"] = pd.DatetimeIndex(us_date_df["op_statusEffectiveDate"]).year
 
         us_date_df = us_date_df.rename(columns={"op_status": "Certification Status"})
+        
         # Further aggregate by month
         us_date_df["op_statusEffectiveDate"] = us_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
 
