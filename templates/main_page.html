@@ -61,17 +61,17 @@
 			<div class="jumbotron bg-info text-white">
 				<h3 style="text-align:center;">Organic Certification Status Counts and Trends</h3>
 			</div>
+			<div class="row">
 			<!-- Scope card visualizations -->
-			
 			<div class="col-lg-2">
 				<div class="row justify-content-center">
-					<div class="container-fluid text-white bg-secondary">
-						<h3 style="text-align:center;">Count of Certified Scopes</h3>
+					<div class="container-fluid">
+						<p class="text-center">Count of Certified Scopes</p>
 					</div>
 				</div>
 				{% for scope, scope_count in scopes_display.items() %}
-				<div class="card text-white bg-dark mb-3 text-center">
-				  <div class="card-header">{{ scope }}</div>
+				<div class="card mb-3 text-center">
+				  <div class="card-header card text-white bg-secondary mb-3">{{ scope }}</div>
 				  <div class="card-body">
 					<h5 class="card-title">{{ scope_count }}</h5>
 					<!--<p class="card-text">Example text.</p> -->
@@ -79,8 +79,40 @@
 				</div>
 				{% endfor %}
 			</div>
-			
-		</div>
+			<!-- Scope combination visualization -->
+			<div class="col-lg-2">
+			<div class="row justify-content-center">
+					<div class="container-fluid">
+						<p class="text-center">Certified Scope Combinations</p>
+					</div>
+				</div>
+			<table class="table table-hover bg-light">
+				<thead>
+					<tr>
+						{% for col in scopes_combo_cols %}
+						<th>{{col }}</th>
+						{% endfor %}
+				  </tr>
+				</thead>
+				<tbody>
+					{% for record in scopes_combo %}
+					<tr>
+						{% for entry in range(0,record|length) %}
+							{% if entry == (record|length)-1 %}
+								<td class="mb-3 text-center" style="border-left: 1px solid #333;">{{ record[entry] }} %</td>
+							{% elif record[entry] != "" %}
+								<td class="mb-3 text-center border border-dark">*</td>
+							{% else %}
+								<td class="table-light"></td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+			</div>
+		</div>	
 		</body>
 		<!-- Footer -->
 		<!-- Footer styling: https://stackoverflow.com/questions/51480958/bootstrap-4-footer-not-at-bottom -->
