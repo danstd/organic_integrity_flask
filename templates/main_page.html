@@ -27,13 +27,17 @@
 	.table-responsive {
     max-height:500px;
 	<!--max_width: 500px; -->
-}
+	}
 
 	</style>
     </head>
 
     <body>
-		<nav class="navbar navbar-expand-md bg-secondary navbar-dark">
+		<div class="container-fluid bg-light">
+			<h3 style="text-align:center;">USDA National Organic Program Certification Dashboard</h3>
+		</div>
+		<hr/>
+		<nav class="navbar navbar-expand-md bg-light navbar-light">
 		
 			<a class="navbar-brand" href= "{{ url_for('index') }}">Home</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsible_navbar">
@@ -44,75 +48,9 @@
 				<a class="nav-item nav-link mx-3 active" href="{{ url_for('united_states') }}">View U.S. certification page</a>
 			</div>
 		</nav>
+		<hr/>
 
-        <!--<div class="container">
-            <p> Organic Data</p>
 
-        <br>
-
-            </p>
-                <form action="." method="POST">
-                    <div class="form-group">
-                    </div>
-                  <button type="submit" class="btn btn-success">Submit</button>
-                </form>
-        </div> -->
-		<div class="container-fluid">
-			<div class="jumbotron bg-info text-white">
-				<h3 style="text-align:center;">Organic Certification Status Counts and Trends</h3>
-			</div>
-			<div class="row">
-			<!-- Scope card visualizations -->
-			<div class="col-lg-2">
-				<div class="row justify-content-center">
-					<div class="container-fluid">
-						<p class="text-center">Count of Certified Scopes</p>
-					</div>
-				</div>
-				{% for scope, scope_count in scopes_display.items() %}
-				<div class="card mb-3 text-center">
-				  <div class="card-header card text-white bg-secondary mb-3">{{ scope }}</div>
-				  <div class="card-body">
-					<h5 class="card-title">{{ scope_count }}</h5>
-					<!--<p class="card-text">Example text.</p> -->
-				  </div>
-				</div>
-				{% endfor %}
-			</div>
-			<!-- Scope combination visualization -->
-			<div class="col-lg-2">
-			<div class="row justify-content-center">
-					<div class="container-fluid">
-						<p class="text-center">Certified Scope Combinations</p>
-					</div>
-				</div>
-			<table class="table table-hover bg-light">
-				<thead>
-					<tr>
-						{% for col in scopes_combo_cols %}
-						<th>{{col }}</th>
-						{% endfor %}
-				  </tr>
-				</thead>
-				<tbody>
-					{% for record in scopes_combo %}
-					<tr>
-						{% for entry in range(0,record|length) %}
-							{% if entry == (record|length)-1 %}
-								<td class="mb-3 text-center" style="border-left: 1px solid #333;">{{ record[entry] }} %</td>
-							{% elif record[entry] != "" %}
-								<td class="mb-3 text-center border border-dark">*</td>
-							{% else %}
-								<td class="table-light"></td>
-							{% endif %}
-						{% endfor %}
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-			</div>
-			</div>
-		</div>	
 		</body>
 		<!-- Footer -->
 		<!-- Footer styling: https://stackoverflow.com/questions/51480958/bootstrap-4-footer-not-at-bottom -->

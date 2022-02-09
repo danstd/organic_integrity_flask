@@ -26,7 +26,6 @@
 	}
 	.table-responsive {
     max-height:500px;
-	<!--max_width: 500px; -->
 }
 
 	</style>
@@ -57,11 +56,88 @@
                   <button type="submit" class="btn btn-success">Submit</button>
                 </form>
         </div> -->
-		{% if country_table %}
+
 		<div class="container-fluid">
-			<div class="jumbotron bg-info text-white"">
+			<div class="jumbotron bg-info text-white">
 				<h3 style="text-align:center;">Organic Certification Status Counts and Trends</h3>
 			</div>
+		</div>
+			
+		<div class="container-fluid">
+			<div class="row">
+			<!-- Scope card visualizations -->
+			<div class="col-lg-4">
+				<div class="row justify-content-center"> <!-- Collapsible header -->
+					<div id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="card text-center">
+                        <div class="card-header" role="tab" id="headingOne"  data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                              Count of Certified Scopes
+                        </div>
+                        <div id="collapseOne" class="card-block collapse in text-left" role="tabpanel" aria-labelledby="headingOne">
+                             <p>The cards below show the count of organic-certified operations by certification scope.<br>These scopes are not mutually exclusive
+								and many operations are certified for multiple scopes.<br>See the Scope Combination section for an overview on this.</p>
+                        </div>
+					  </div>
+					</div>
+				</div>
+				<br>
+				<div class="card-columns">
+				{% for scope, scope_count in scopes_display.items() %}
+				<div class="card mb-3 text-center">
+				  <div class="card-header card mb-3">{{ scope }}</div>
+				  <div class="card-body">
+					<h5 class="card-title">{{ scope_count }}</h5>
+					<!--<p class="card-text">Example text.</p> -->
+				  </div>
+				</div>
+				{% endfor %}
+				</div>
+			</div>
+			<div class="col-lg-4">
+			</div>
+			<!-- Scope combination visualization -->
+			<div class="col-lg-4">
+				<div class="row justify-content-center"> <!-- Collapsible header -->
+					<div id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="card text-center">
+                        <div class="card-header" role="tab" id="headingOne"  data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+                              Certified Scope Combinations
+                        </div>
+                        <div id="collapseTwo" class="card-block collapse in text-left" role="tabpanel" aria-labelledby="headingOne">
+                             <p>This table shows combinations of certified scopes in decreasing order of prevalence</p>
+                        </div>
+					  </div>
+					</div>
+				</div>
+				<br>
+					<table class="table table-responsive table-hover bg-light" style="font-size: 12px; width: 100%">
+						<thead style="position: sticky; background-color: white; top: 0">
+					<tr>
+						{% for col in scopes_combo_cols %}
+						<th>{{col }}</th>
+						{% endfor %}
+				  </tr>
+				</thead>
+				<tbody>
+					{% for record in scopes_combo %}
+					<tr>
+						{% for entry in range(0,record|length) %}
+							{% if entry == (record|length)-1 %}
+								<td class="mb-3 text-center" style="border-left: 1px solid #333;">{{ record[entry] }} %</td>
+							{% elif record[entry] != "" %}
+								<td class="mb-3 text-center border border-dark">*</td>
+							{% else %}
+								<td class="table-light"></td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+			</div>
+			</hr>
+			<br>
 			<div class="row">
 				<!--Organic Operations By Country< Table-->
 				<div class="col-lg-6">
@@ -89,7 +165,6 @@
 			</div>
 		</div>
 		
-		{% endif %}
 		</body>
 		<!-- Footer -->
 		<!-- Footer styling: https://stackoverflow.com/questions/51480958/bootstrap-4-footer-not-at-bottom -->
