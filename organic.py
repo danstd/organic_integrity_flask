@@ -82,11 +82,53 @@ def index():
         for i in range(0,len(scopes)):
             scopes_count[scopes[i]]= scopes_return[i][0]
     
+    # Get certified count combinations
+        # Get all scope certification columns
+        scope_set = db.session.query(
+            OrganicOperation.opSC_HANDLING,
+            OrganicOperation.opSC_CR,
+            OrganicOperation.opSC_LS,
+            OrganicOperation.opSC_WC,
+            ).select_from(OrganicOperation
+            ).all()
+        # Make a dataframe and drop any certifications that are not certified at all.
+        scope_set = pd.DataFrame(scope_set, columns=["H", "C", "L", "W"])
+
+        scope_set = scope_set.loc[
+            (scope_set["H"] == "Certified") |
+            (scope_set["C"] == "Certified") |
+            (scope_set["L"] == "Certified") |
+            (scope_set["W"] == "Certified")
+        ]
+
+        # Make a pseudo sparse matrix
+        scope_cols = scope_set.columns.tolist()
+        for i in scope_cols:
+            scope_set[i] = scope_set[i].str.replace("Surrendered","")
+            scope_set[i] = scope_set[i].str.replace("Suspended","")
+            scope_set[i] = scope_set[i].str.replace("Certified",i)
+
+        # Group the combinations.
+        scope_set = scope_set.groupby(["H", "C", "L", "W"], as_index=False).size()
+        # Make a name column with meaning for the combinations.
+        #scope_set["Name"] = scope_set["H"] +  ", " + scope_set["C"] + ", " + scope_set["L"] + ", " + scope_set["W"]
+        #scope_set["Name"] = scope_set["Name"].str.replace(r'^(, )+|(, )+$', "", regex=True)
+        #scope_set["Name"] = scope_set["Name"].str.replace(r'(, )+', ", ", regex=True)
+
+        # Get the percentage of each combination.
+        total = sum(scope_set["size"])
+
+        scope_set["size"] = round(((scope_set["size"] / total)* 100),3)
+
+        scope_set.sort_values("size", ascending=False, inplace=True)
         
         return render_template(
             "main_page.html",
-            scopes_display=scopes_count
+            scopes_display=scopes_count,
+            scopes_combo=scope_set.values.tolist(),
+            scopes_combo_cols=["Handling", "Crops", "Livestock", "Wild Crops", "Percentage"]
         )
+        
 
 @app.route("/world", methods=["GET"])
 def world():
