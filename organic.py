@@ -1,14 +1,14 @@
 from flask import Flask, redirect, render_template, request, url_for
-import requests
-import json
-from api_key_get import key_get
+#import requests
+#import json
+#from api_key_get import key_get
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import seaborn as sns
 import datetime
 import matplotlib.pyplot as plt
-import io
-import base64
+#import io
+#import base64
 
 # Set plot parameters
 plt.rcParams.update({"font.size": 22})
@@ -37,11 +37,11 @@ db = SQLAlchemy(app)
 @app.route("/", methods=["GET"])
 def index():
     if request.method != "GET":
-        return render_template("main_page.html")
+        return render_template("organic_main_page.html")
     else:
         
         return render_template(
-            "main_page.html")
+            "organic_main_page.html")
         
 
 @app.route("/world", methods=["GET"])
@@ -68,6 +68,14 @@ def world():
         
         country_pivot.reset_index(inplace=True)
 
+        country_pivot.loc[country_pivot["Country"]=="", "Country"] = "__No Country Name"
+        country_pivot.loc[country_pivot["Country"]=="All", "Country"] = "AAALL"
+
+        country_pivot["Country"] = country_pivot["Country"].str.replace("the", "The", regex=False)
+
+        country_pivot.sort_values("Country",inplace=True)
+        country_pivot.loc[country_pivot["Country"]=="AAALL", "Country"] = "All Countries"
+        country_pivot.loc[country_pivot["Country"]=="__No Country Name", "Country"] = "No Country Name"
         country_table_cols = country_pivot.columns.tolist()
 
     # Create certification change plot.
@@ -89,17 +97,55 @@ def world():
 
         cert_date_df = cert_date_df.loc[cert_date_df["year"] > datetime.datetime.now().year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum()
 
-        sns.set_style("darkgrid")
-        sns.set_palette("Set3")
-        sns.relplot(data=cert_date_df, x="op_statusEffectiveDate", y="op_count", kind="line", hue="Certification Status",height=10, aspect=1.5, linewidth=3)
+        sns.set_style("whitegrid")
+        sns.set_palette("Set1")
+        sns.set_context("poster")
+        sns.relplot(data=cert_date_df, x="op_statusEffectiveDate",
+                    y="op_count",
+                    kind="line",
+                    hue="Certification Status",
+                    height=12,
+                    aspect=1.5,
+                    linewidth=3)
 
-        plt.title("Certification Changes Over Time")
+        #plt.title("Certification Changes Over Time")
         plt.xlabel("Date")
         plt.ylabel("Monthly Change")
 
         # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
         status_date_url = "static\\images\\certification_date.png"
         plt.savefig(status_date_url, bbox_inches="tight", pad_inches=0.3)
+
+    # Create basic certification change plot - certified minus surrendered, suspended, etc..
+        trend_df = pd.DataFrame(certification_date)
+        trend_df['year'] = pd.DatetimeIndex(trend_df['op_statusEffectiveDate']).year
+        trend_df['op_statusEffectiveDate'] = trend_df['op_statusEffectiveDate'].apply(lambda x: x.replace(day=1))
+        trend_df = trend_df.loc[trend_df['year'] > 2018]
+        trend_df = trend_df.loc[trend_df["op_status"] != "Applied; APEDA Certified"]
+
+        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum()
+
+        trend_df = trend_df.pivot_table(
+        index="op_statusEffectiveDate", 
+        columns="op_status", 
+        values="op_count",
+        aggfunc="sum", fill_value=0,
+        margins=False)
+
+        trend_df["Trend"] = trend_df["Certified"] - (trend_df["Revoked"] + trend_df["Surrendered"] + trend_df["Suspended"])
+
+        sns.set_style('whitegrid')
+        sns.set_palette('dark')
+        sns.set_context("poster")
+        sns.relplot(data=trend_df, x='op_statusEffectiveDate', y='Trend', kind='line',height=10, aspect=1.5)
+
+        #plt.title('Certification Changes Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Monthly Change')
+
+        # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
+        simple_status_date_url = "static\\images\\certification_date_basic.png"
+        plt.savefig(simple_status_date_url, bbox_inches="tight", pad_inches=0.3)
 
     # Global certification scope get
     # Subqueries
@@ -184,6 +230,7 @@ def world():
             country_table=country_pivot.values.tolist(),
             country_table_cols=country_table_cols,
             status_date_url=status_date_url,
+            simple_status_date_url=simple_status_date_url,
             scopes_display=scopes_count,
             scopes_combo=scope_set.values.tolist(),
             scopes_combo_cols=["Handling", "Crops", "Livestock", "Wild Crops", "Percentage"])
@@ -296,11 +343,14 @@ def united_states():
         # Further aggregate by month
         us_date_df["op_statusEffectiveDate"] = us_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
 
-        us_date_df = us_date_df.loc[us_date_df["year"] > datetime.datetime.now().year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum()
+        us_date_df = us_date_df.loc[us_date_df["year"] > datetime.datetime.now().year-10
+            ].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False
+            )["op_count"].sum()
 
-        sns.set_style("darkgrid")
-        sns.set_palette("Set3")
-        sns.relplot(data=us_date_df, x="op_statusEffectiveDate", y="op_count", kind="line", hue="Certification Status",height=10, aspect=1.5, linewidth=3)
+        sns.set_style("whitegrid")
+        sns.set_palette("Set1")
+        sns.set_context("poster")
+        sns.relplot(data=us_date_df, x="op_statusEffectiveDate", y="op_count", kind="line", hue="Certification Status",height=14, aspect=1.5, linewidth=3)
 
         plt.title("U.S. Certification Changes Over Time")
         plt.xlabel("Date")
@@ -310,13 +360,45 @@ def united_states():
         us_date_url = "static\\images\\us_certification_date.png"
         plt.savefig(us_date_url, bbox_inches="tight", pad_inches=0.3)
 
+    # Create basic certification change plot - certified minus surrendered, suspended, etc..
+        trend_df = pd.DataFrame(us_date)
+        trend_df['year'] = pd.DatetimeIndex(trend_df['op_statusEffectiveDate']).year
+        trend_df['op_statusEffectiveDate'] = trend_df['op_statusEffectiveDate'].apply(lambda x: x.replace(day=1))
+        trend_df = trend_df.loc[trend_df['year'] > 2018]
+        trend_df = trend_df.loc[trend_df["op_status"] != "Applied; APEDA Certified"]
+
+        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum()
+
+        trend_df = trend_df.pivot_table(
+        index="op_statusEffectiveDate", 
+        columns="op_status", 
+        values="op_count",
+        aggfunc="sum", fill_value=0,
+        margins=False)
+
+        trend_df["Trend"] = trend_df["Certified"] - (trend_df["Revoked"] + trend_df["Surrendered"] + trend_df["Suspended"])
+
+        sns.set_style('whitegrid')
+        sns.set_palette('dark')
+        sns.set_context("poster")
+        sns.relplot(data=trend_df, x='op_statusEffectiveDate', y='Trend', kind='line',height=10, aspect=1.5)
+
+        #plt.title('Certification Changes Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Monthly Change')
+
+        # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
+        us_simple_status_date_url = "static\\images\\us_certification_date_basic.png"
+        plt.savefig(us_simple_status_date_url, bbox_inches="tight", pad_inches=0.3)
+
         
         return render_template(
             "united_states.html",
             us_table=us_pivot.values.tolist(),
             us_table_cols=us_table_cols,
             us_scopes_display=us_scopes_return,
-            us_date_url=us_date_url)
+            us_date_url=us_date_url,
+            us_simple_status_date_url=us_simple_status_date_url)
 
 # Models
 class OrganicOperation(db.Model):
