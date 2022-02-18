@@ -1,12 +1,11 @@
 from flask import Flask, redirect, render_template, request, url_for
-from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
-import seaborn as sns
 import datetime
-import matplotlib.pyplot as plt
+from os import sep
 
-# Set plot parameters
-plt.rcParams.update({"font.size": 22})
+# Set file path variables
+static = "static" + sep
+static_img = "static" + sep + "images" + sep
 
 app = Flask(__name__)
 app.debug = True
@@ -27,13 +26,13 @@ def world():
         return render_template("main_page.html")
     else:
         # Get saved images and csv files.
-        country_table = pd.read_csv("static\\op_status_country.csv")
+        country_table = pd.read_csv(static + "op_status_country.csv")
+        
+        status_date_url = static_img + "certification_date.png"
+        
+        simple_status_date_url = static_img + "certification_date_basic.png"
 
-        status_date_url = "static\\images\\certification_date.png"
-
-        simple_status_date_url = "static\\images\\certification_date_basic.png"
-
-        scopes_count = pd.read_csv("static\\scopes_count.csv")
+        scopes_count = pd.read_csv(static + "scopes_count.csv")
         scope_card_keys = scopes_count.columns.to_list()
         scope_card_vals = scopes_count.values.tolist()
         
@@ -42,7 +41,7 @@ def world():
         for i in range(0,len(scope_card_keys)):
             scope_cards[scope_card_keys[i]] = scope_card_vals[0][i]
 
-        scope_set = pd.read_csv("static\\scopes_combo.csv")
+        scope_set = pd.read_csv(static + "scopes_combo.csv")
         scope_set = scope_set.fillna("")
 
         return render_template(
@@ -64,10 +63,10 @@ def united_states():
     else:
         # Get saved images and csv files.
 
-        us_pivot = pd.read_csv("static\\us_table.csv")
+        us_pivot = pd.read_csv(static + "us_table.csv")
         us_pivot = us_pivot.fillna("")
 
-        us_scopes_return = pd.read_csv("static\\us_scopes_return.csv", dtype=str)
+        us_scopes_return = pd.read_csv(static + "us_scopes_return.csv", dtype=str)
         # Must fix formatting
         for i in us_scopes_return.columns.to_list():
             us_scopes_return[i] = us_scopes_return[i].str.replace(".0","",regex=False)
@@ -76,9 +75,11 @@ def united_states():
         
         us_scopes_return = us_scopes_return.fillna("")
         
-        us_date_url = "static\\images\\us_certification_date.png"
+        us_date_url = static_img + "us_certification_date.png"
 
-        us_simple_status_date_url = "static\\images\\us_certification_date_basic.png"
+        us_simple_status_date_url = static_img + "us_certification_date_basic.png"
+
+        us_certification_count_url = static_img + "us_certification_count.png"
         
         return render_template(
             "united_states.html",
@@ -86,4 +87,5 @@ def united_states():
             us_table_cols=us_pivot.columns.to_list(),
             us_scopes_display=us_scopes_return.values.tolist(),
             us_date_url=us_date_url,
-            us_simple_status_date_url=us_simple_status_date_url)
+            us_simple_status_date_url=us_simple_status_date_url,
+            us_certification_count_url=us_certification_count_url)

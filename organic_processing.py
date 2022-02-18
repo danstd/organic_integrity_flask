@@ -208,6 +208,7 @@ sns.relplot(data=trend_df, x='op_statusEffectiveDate', y='Trend', kind='line',he
 #plt.title('Certification Changes Over Time')
 plt.xlabel('Date')
 plt.ylabel('Monthly Change')
+plt.xticks(rotation=30)
 
 # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
 simple_status_date_url = "static\\images\\certification_date_basic.png"
@@ -296,11 +297,7 @@ if "0" in scope_set.columns.to_list():
     scope_set = scope_set.rename(columns={"0":"size"})
 elif 0 in scope_set.columns.to_list():
     scope_set = scope_set.rename(columns={0:"size"})
-# Make a name column with meaning for the combinations.
-#scope_set["Name"] = scope_set["H"] +  ", " + scope_set["C"] + ", " + scope_set["L"] + ", " + scope_set["W"]
-#scope_set["Name"] = scope_set["Name"].str.replace(r'^(, )+|(, )+$', "", regex=True)
-#scope_set["Name"] = scope_set["Name"].str.replace(r'(, )+', ", ", regex=True)
-
+    
 # Fix size column name
 if "0" in scope_set.columns.to_list():
     scope_set = scope_set.rename(columns={"0":"size"})
@@ -461,6 +458,16 @@ plt.savefig(us_date_url, bbox_inches="tight", pad_inches=0.3)
 # us_certification_date_basic.png---------------------------
 # Create basic certification change plot - certified minus surrendered, suspended, etc..
 trend_df = pd.DataFrame(us_date)
+
+# Get current count of US certified operations
+us_cert_current = sum(trend_df.loc[trend_df["op_status"]=="Certified","op_count"])
+
+# Function to apply in gettingmonthly certification count
+def trend_change(trend):
+    global us_cert_current
+    us_cert_current = us_cert_current - trend
+    return us_cert_current
+
 trend_df['year'] = pd.DatetimeIndex(trend_df['op_statusEffectiveDate']).year
 trend_df['op_statusEffectiveDate'] = trend_df['op_statusEffectiveDate'].apply(lambda x: x.replace(day=1))
 trend_df = trend_df.loc[trend_df['year'] > 2018]
@@ -477,6 +484,11 @@ trend_df = trend_df.pivot_table(
 
 trend_df["Trend"] = trend_df["Certified"] - (trend_df["Revoked"] + trend_df["Surrendered"] + trend_df["Suspended"])
 
+# Get total count of certified operations estimate per month
+# This will not necessarily capture changes to/from suspension accurately
+trend_df.sort_values("op_statusEffectiveDate", ascending=False, inplace=True)
+trend_df["total_count"] = trend_df["Trend"].apply(trend_change)
+trend_df.sort_values("op_statusEffectiveDate", ascending=True, inplace=True)
 sns.set_style('whitegrid')
 sns.set_palette('dark')
 sns.set_context("poster")
@@ -485,7 +497,22 @@ sns.relplot(data=trend_df, x='op_statusEffectiveDate', y='Trend', kind='line',he
 #plt.title('Certification Changes Over Time')
 plt.xlabel('Date')
 plt.ylabel('Monthly Change')
+plt.xticks(rotation=30)
 
 # From https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
 us_simple_status_date_url = "static\\images\\us_certification_date_basic.png"
 plt.savefig(us_simple_status_date_url, bbox_inches="tight", pad_inches=0.3)
+
+# us_certification_count.png-------------
+# Plot total count per month using calculations in us_certification_date_basic.png section
+sns.set_style('whitegrid')
+sns.set_palette('flare')
+sns.set_context("poster")
+sns.relplot(data=trend_df, x='op_statusEffectiveDate', y='total_count', kind='line',height=10, aspect=1.5)
+
+plt.xlabel('Date')
+plt.ylabel('Certified Operations')
+plt.xticks(rotation=30)
+
+us_certification_count_url = "static\\images\\us_certification_count.png"
+plt.savefig(us_certification_count_url, bbox_inches="tight", pad_inches=0.3)
