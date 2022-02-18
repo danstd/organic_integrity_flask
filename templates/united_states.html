@@ -70,7 +70,7 @@
 					  <div class="tab-content">
 						<div id="op_by_state" class="container tab-pane active"><br>
 						  <h4>U.S. Organic Operations By State</h4>
-						  <p> This is an explanation of this table.
+						  <p>This table shows the breakdown of certification status by state.
 						  </p>
 								<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
 									<thead style="position: sticky; background-color: white; top: 0">
@@ -92,7 +92,7 @@
 						<!--US Organic Scopes Count By State Table-->
 						<div id="scope_by_state" class="container tab-pane fade"><br>
 						  <h4>U.S. Certified Scopes By State</h4>
-						  <p>This is a description of the table.</p>
+						  <p>Below, the number of certified scopes by state is shown. Note that scopes are not mutually exclusive.</p>
 							<table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
 								<thead style="position: sticky; background-color: white; top: 0">
 									<th>State</th>
@@ -128,6 +128,9 @@
 						<li class="nav-item">
 						  <a class="nav-link" data-toggle="tab" href="#cert_trend">U.S. Certification Trend</a>
 						</li>
+						<li class="nav-item">
+						  <a class="nav-link active" data-toggle="tab" href="#cert_count">U.S. Certification Over Time</a>
+						</li>
 					  </ul>
 
 					  <!-- Tab panels -->
@@ -140,7 +143,7 @@
 							by January of each year.
 							Therefore it may take up to a year for the full counts to be received.</p>
 						  <img class="img-responsive" src={{ us_date_url}} alt="Chart" style="width:100%">
-						</div> <!-- First tab end -->
+						</div> <!-- tab end -->
 						
 						<!-- US Certification Trends Plot -->
 						<div id="cert_trend" class="container tab-pane fade"><br>
@@ -148,7 +151,16 @@
 						  <p>Below, the net change in certification is shown as
 						     Certified - (Surrendered, Suspended, and Revoked)</p>
 						  <img class="img-responsive" src={{ us_simple_status_date_url }} alt="Chart" style="width:100%">
-						</div> <!-- Second tab end -->
+						</div> <!-- tab end -->
+						
+						<!-- US Certification Count Over Time Plot -->
+						<div id="cert_count" class="container tab-pane active"><br>
+						  <h4>U.S. Certification Over Time</h4>
+						  <p>Below, the estimated total count of certified operations in the U.S. over time is shown. 
+						  This has been calculated by reversing monthly changes over time from the current count of 
+						  certified operations.</p>
+						  <img class="img-responsive" src={{ us_certification_count_url }} alt="Chart" style="width:100%">
+						</div> <!-- tab end -->
 					  </div>
 					</div>
 				</div>			

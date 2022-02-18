@@ -1,4 +1,4 @@
-<html class="has-sticky-footer">
+html class="has-sticky-footer">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -136,7 +136,7 @@
 							See the Scope Combination section for an overview on this.
 						  </p>
 						  <div class="card-columns">
-							{% for scope, scope_count in scopes_display.items() %}
+							{% for scope, scope_count in scope_cards.items() %}
 							<div class="card mb-3 text-center">
 							  <div class="card-header card mb-3">{{ scope }}</div>
 							  <div class="card-body">
@@ -162,10 +162,10 @@
 								{% for record in scopes_combo %}
 								<tr>
 									{% for entry in range(0,record|length) %}
-										{% if entry == (record|length)-1 %}
-											<td class="mb-3 text-center" style="border-left: 1px solid #333;">{{ record[entry] }} %</td>
+										{% if entry == 0 %} <!-- If first entry -->
+											<td class="mb-3 text-center border border-dark">{{ record[entry] }} %</td>
 										{% elif record[entry] != "" %}
-											<td class="mb-3 text-center border border-dark">*</td>
+											<td class="mb-3 text-center border border-dark">{{ record[entry] }}</td>
 										{% else %}
 											<td class="table-light"></td>
 										{% endif %}
