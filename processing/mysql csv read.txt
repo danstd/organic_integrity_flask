@@ -1,0 +1,20 @@
+set session sql_mode = '';
+set session sql_mode = 'NO_ENGINE_SUBSTITUTION';
+
+
+load data local infile '/home/ddavis11/mysite/organic_operations.csv' into table organic_operation fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
+load data local infile '/home/ddavis11/mysite/organic_items.csv' into table organic_item fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
+--------------------------------LOCAL-----------------------------------------------------
+
+set session sql_mode = '';
+set session sql_mode = 'NO_ENGINE_SUBSTITUTION';
+
+delete from organic_integrity.organic_item;
+delete from organic_integrity.organic_operation;
+
+load data infile 'organic_operations.csv' into table organic_integrity.organic_operation fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
+load data infile 'organic_items.csv' into table organic_integrity.organic_item fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows;
+
