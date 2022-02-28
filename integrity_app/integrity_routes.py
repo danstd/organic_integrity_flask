@@ -74,3 +74,23 @@ def united_states():
             us_table=us_pivot.values.tolist(),
             us_table_cols=us_pivot.columns.to_list(),
             us_scopes_display=us_scopes_return.values.tolist())
+
+
+#----------------------products route---------------------
+@app.route("/products", methods=["GET"])
+def products():
+    if request.method != "GET":
+        return render_template("main_page.html")
+    else:
+        top_items_crops=pd.read_csv(static + "top_items_crops.csv").values.tolist()
+        top_items_livestock=pd.read_csv(static + "top_items_livestock.csv").values.tolist()
+        top_items_handling=pd.read_csv(static + "top_items_handling.csv").values.tolist()
+        top_items_wild=pd.read_csv(static + "top_items_wild.csv").values.tolist()
+
+        return render_template(
+            "products.html",
+            top_items_crops=top_items_crops,
+            top_items_livestock=top_items_livestock,
+            top_items_handling=top_items_handling,
+            top_items_wild=top_items_wild)
+            

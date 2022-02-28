@@ -20,4 +20,4 @@ db = SQLAlchemy(app)
 
 import integrity_app.integrity_model
 import integrity_app.integrity_routes
-import integrity_app.organic_processing_trial
+import integrity_app.organic_processing

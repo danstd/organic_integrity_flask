@@ -1,0 +1,156 @@
+<html class="has-sticky-footer">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!--Latest compiled and minified CSS -->
+        <link rel="stylesheet"href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+		
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+        -->
+		<!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.5.1/js/bootstrap.min.js"></script> -->
+
+        <title>Organic Integrity - Products</title>
+	<style>
+	p.padding_left {
+	  padding-left: 5%;
+	}
+	.table-responsive {
+    max-height:500px;
+}
+
+	</style>
+    </head>
+
+    <body>
+		<nav class="navbar navbar-expand-md bg-secondary navbar-dark">
+		
+			<a class="navbar-brand" href= "{{ url_for('index') }}">Home</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsible_navbar">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+			<div class="nav navbar-nav navbar-right mr-auto">
+				<a class="nav-item nav-link mx-3 active" href="{{ url_for('world') }}">View global certification page</a>
+				<a class="nav-item nav-link mx-3 active" href="{{ url_for('united_states') }}">View U.S. certification page</a>
+				<a class="nav-item nav-link mx-3 active" href="{{ url_for('products') }}">View products page</a>
+			</div>
+		</nav>
+		<div class="jumbotron">
+		  <h2 style="text-align:center;">Certified Organic Products</h2>
+		</div>
+			
+		<div class="container-fluid">
+
+			<div class="row">
+				<!-- Certification status trends and counts -->
+				<div class="col-lg-6">
+					<div class="container mt-3">
+					  <h3>Top Ten Items By Scope</h3>
+					  <br>
+					  <!-- Nav tabs -->
+					  <ul class="nav nav-tabs">
+						<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#top_10_crops">Crops</a></li>
+						<li class="nav-item"><a class="nav-link " data-toggle="tab" href="#top_10_handling">Handling</a></li>
+						<li class="nav-item"><a class="nav-link " data-toggle="tab" href="#top_10_livestock">Livestock</a></li>
+						<li class="nav-item"><a class="nav-link " data-toggle="tab" href="#top_10_wild">Wild Crops</a></li>
+					  </ul>
+
+					  <!-- Tab panels -->
+					  <div class="tab-content">
+						<div id="top_10_crops" class="container tab-pane active"><br>
+							<table class="table table-responsive table-hover" style="font-size: 12px; width: 50%">
+								<thead>
+									<th>Item</th>
+									<th>Number of Listings</th>
+								</thead>
+								<tbody>
+								{% for item, count in top_items_crops %}
+									<tr>
+										<td>{{ item }}</td>
+										<td>{{ count }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div> <!-- End of crops tab -->
+						<div id="top_10_handling" class="container tab-pane"><br>
+							<table class="table table-responsive table-hover" style="font-size: 12px; width: 50%">
+								<thead>
+									<th>Item</th>
+									<th>Number of Listings</th>
+								</thead>
+								<tbody>
+								{% for item, count in top_items_handling %}
+									<tr>
+										<td>{{ item }}</td>
+										<td>{{ count }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div> <!-- End of handling tab -->
+						<div id="top_10_livestock" class="container tab-pane"><br>
+							<table class="table table-responsive table-hover" style="font-size: 12px; width: 50%">
+								<thead>
+									<th>Item</th>
+									<th>Number of Listings</th>
+								</thead>
+								<tbody>
+								{% for item, count in top_items_livestock %}
+									<tr>
+										<td>{{ item }}</td>
+										<td>{{ count }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div> <!-- End of livestock tab -->
+						<div id="top_10_wild" class="container tab-pane"><br>
+							<table class="table table-responsive table-hover" style="font-size: 12px; width: 50%">
+								<thead>
+									<th>Item</th>
+									<th>Number of Listings</th>
+								</thead>
+								<tbody>
+								{% for item, count in top_items_wild %}
+									<tr>
+										<td>{{ item }}</td>
+										<td>{{ count }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div> <!-- End of wild crops tab -->
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</body>
+		<!-- Footer -->
+		<!-- Footer styling: https://stackoverflow.com/questions/51480958/bootstrap-4-footer-not-at-bottom -->
+        <footer class="d-flex justify-content-center mt-auto">
+            <div class="d-flex justify-content-between col-md-8 col-md-offset-2 mb-3 mt-5">
+				<div class="align-left">
+					<a class="font-weight-bold small kf-blue kf-links" href="https://github.com/danstd/organic_integrity_flask">Github</a> |
+                    <a class="font-weight-bold small kf-blue kf-links" href="https://organic.ams.usda.gov/Integrity/Developer/APIHelp.aspx">Organic Integrity</a>
+                </div>
+				<div class="align-middle">
+					<i>This product uses USDA’s Organic Integrity Database API but is not endorsed or certified by USDA.</i>
+				</div>
+                <div class="align-right">
+					<a class="font-weight-bold small kf-blue kf-links" href="mailto:danielst.davis@gmail.com">Contact</a>
+                </div>
+            </div>
+        </footer>
+</html>
