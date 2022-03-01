@@ -503,9 +503,28 @@ def products_process():
 
         item_top = pd.concat([item_count_c[0:10], item_count_l[0:10], item_count_h[0:10], item_count_w[0:10]]).reset_index()
 
-        item_count_c.iloc[0:10,[0,2]].to_csv("top_items_crops.csv",index=False)
-        item_count_l.iloc[0:10,[0,2]].to_csv("top_items_livestock.csv",index=False)
-        item_count_h.iloc[0:10,[0,2]].to_csv("top_items_handling.csv",index=False)
-        item_count_w.iloc[0:10,[0,2]].to_csv("top_items_wild.csv",index=False)
-        
+        item_count_c.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_crops.csv",index=False)
+        item_count_l.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_livestock.csv",index=False)
+        item_count_h.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_handling.csv",index=False)
+        item_count_w.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_wild.csv",index=False)
+
+        # top_by_country.csv-------------
+        country_item_agg = items.groupby([0,2],as_index=False).size().sort_values("size", ascending=False)
+        country_item_agg = country_item_agg.groupby(2).head(1)
+        country_item_agg = country_item_agg.rename(columns={0:"Product", 2:"Country", "size":"Count"})
+        country_item_agg = country_item_agg[["Country", "Product", "Count"]]
+        country_item_agg.to_csv("integrity_app/static/top_by_country.csv",index=False)
+
+        # top_by_country_scope.csv---------
+        # Get count by country and scope
+        country_item_scope_agg = items.groupby([0,1,2],as_index=False).size().sort_values("size", ascending=False)
+        country_item_scope_agg.rename(columns={0:"product" ,1:"scope" ,2:"country" ,"size":"count"},inplace=True)
+        country_item_scope_agg = country_item_scope_agg.groupby(["country","scope"]).head(1)
+        country_item_scope_agg["product-count"] = country_item_scope_agg["product"] + " (" + country_item_scope_agg["count"].astype(str) + ")"
+
+        top_by_country_scope = country_item_scope_agg.pivot("country","scope","product-count")
+        top_by_country_scope.reset_index(inplace=True)
+        top_by_country_scope.fillna("",inplace=True)
+        top_by_country_scope.to_csv("integrity_app/static/top_by_country_scope.csv",index=False)
+    
         return "The products view data was processed!"

@@ -51,7 +51,7 @@
 		<div class="container-fluid">
 
 			<div class="row">
-				<!-- Certification status trends and counts -->
+				<!-- Total Item Counts -->
 				<div class="col-lg-6">
 					<div class="container mt-3">
 					  <h3>Top Ten Items By Scope</h3>
@@ -133,6 +133,61 @@
 					  </div>
 					</div>
 				</div>
+				<!-- Top item by country -->
+				<div class="col-lg-6">
+					<div class="container mt-3">
+					  <h3>Top Items By Country</h3>
+					  <br>
+					  <!-- Nav tabs -->
+					  <ul class="nav nav-tabs">
+						<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#top_country">Top By Country</a></li>
+						<li class="nav-item"><a class="nav-link " data-toggle="tab" href="#top_country_scope">Top By Country and Scope</a></li>
+					  </ul>
+					  <!-- Tab panels -->
+					  <div class="tab-content">
+						<div id="top_country" class="container tab-pane active"><br>
+						  <table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
+								<thead style="position: sticky; background-color: white; top: 0">
+									<th>Country</th>
+									<th>Item</th>
+									<th>Number of Listings</th>
+								</thead>
+								<tbody>
+								{% for country, item, count in top_by_country %}
+									<tr>
+										<td>{{ country }}</td>
+										<td>{{ item }}</td>
+										<td>{{ count }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+						  </table>
+						  </div> <!-- End of top by country tab -->
+						  <div id="top_country_scope" class="container tab-pane"><br>
+						  <table class="table table-responsive table-hover" style="font-size: 12px; width: 100%">
+								<thead style="position: sticky; background-color: white; top: 0">
+									<th>Country</th>
+									<th>Crops</th>
+									<th>Handling</th>
+									<th>Livestock</th>
+									<th>Wild Crops</th>
+								</thead>
+								<tbody>
+								{% for country, crops, handling, livestock, wild in top_by_country_scope %}
+									<tr>
+										<td>{{ country }}</td>
+										<td>{{ crops }}</td>
+										<td>{{ handling }}</td>
+										<td>{{ livestock }}</td>
+										<td>{{ wild }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+						  </table>
+						  </div> <!-- End of top by country and scope tab -->
+						</div>
+					</div>
+				</div>	
 			</div>
 		</div>
 		

@@ -82,15 +82,23 @@ def products():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
-        top_items_crops=pd.read_csv(static + "top_items_crops.csv").values.tolist()
-        top_items_livestock=pd.read_csv(static + "top_items_livestock.csv").values.tolist()
-        top_items_handling=pd.read_csv(static + "top_items_handling.csv").values.tolist()
-        top_items_wild=pd.read_csv(static + "top_items_wild.csv").values.tolist()
+        top_items_crops = pd.read_csv(static + "top_items_crops.csv").values.tolist()
+        top_items_livestock = pd.read_csv(static + "top_items_livestock.csv").values.tolist()
+        top_items_handling = pd.read_csv(static + "top_items_handling.csv").values.tolist()
+        top_items_wild = pd.read_csv(static + "top_items_wild.csv").values.tolist()
 
+        top_by_country = pd.read_csv(static + "top_by_country.csv").values.tolist()
+
+        top_by_country_scope = pd.read_csv(static + "top_by_country_scope.csv")
+        top_by_country_scope.fillna("",inplace=True)
+        top_by_country_scope=top_by_country_scope.values.tolist()
+        
         return render_template(
             "products.html",
             top_items_crops=top_items_crops,
             top_items_livestock=top_items_livestock,
             top_items_handling=top_items_handling,
-            top_items_wild=top_items_wild)
+            top_items_wild=top_items_wild,
+            top_by_country=top_by_country,
+            top_by_country_scope=top_by_country_scope)
             

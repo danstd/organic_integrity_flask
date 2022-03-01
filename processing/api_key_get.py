@@ -1,8 +1,7 @@
 import json
 import csv
     
-#def key_get(key_name, file = 'C:\\Users\\stoandel\\Documents\\python_programming\\api_keys.csv'):
-def key_get(key_name, file = 'api_keys.csv'):
+def key_get(key_name, file = "C:\\Users\\stoandel\\Documents\\python_programming\\api_keys.csv"):
     #Attempt to read existing file
     result_dict = dict()
     try:
@@ -19,6 +18,8 @@ def key_get(key_name, file = 'api_keys.csv'):
 
 	
 if __name__ == "__main__":
-    with open('C:\\Users\\stoandel\\Documents\\mdh\\api_keys.csv') as api:
-        api_keys = json.load(api)
-        print(api_keys)
+    with open("C:\\Users\\stoandel\\Documents\\python_programming\\api_keys.csv","r", newline="") as csvObj:
+        csvReader = csv.reader(csvObj)
+
+        for row in csvReader:
+            print(row[0] + ": " + row[1])
