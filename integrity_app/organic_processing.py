@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from integrity_app import app
 from integrity_app.integrity_model import db, OrganicOperation, OrganicItem
@@ -8,6 +8,7 @@ import datetime
 import matplotlib.pyplot as plt
 from os import sep
 from sqlalchemy.sql.functions import coalesce
+from api_key_get import key_get
 
 # Set file path variables
 static = "integrity_app" + sep + "integrity_app/static" + sep
@@ -16,12 +17,21 @@ static_img = "integrity_app" + sep + "integrity_app/static" + sep + "images" + s
 # Set plot parameters
 plt.rcParams.update({"font.size": 22})
 
+# Key verification: https://blog.ruanbekker.com/blog/2018/06/01/add-a-authentication-header-to-your-python-flask-app/
+
+
 #----------------World page route-------------------------
 @app.route("/world_process", methods=["GET", "POST"])
 def world_process():
     if request.method != "POST":
         return "POST to re-process data for World view"
     else:
+        # Authenticate key
+        headers = request.headers
+        auth = headers.get("key")
+        if auth != key_get("integrity_app_process"):
+            return jsonify({"message": "ERROR: Unauthorized"}), 401
+
         # op_status_country.csv------------------------
         # Query to get number of operations by status and by country
         op_return = db.session.query(
@@ -250,6 +260,12 @@ def us_process():
     if request.method != "POST":
         return "POST to re-process data for U.S. view"
     else:
+        # Authenticate key
+        headers = request.headers
+        auth = headers.get("key")
+        if auth != key_get("integrity_app_process"):
+            return jsonify({"message": "ERROR: Unauthorized"}), 401
+        
         # us_table.csv--------------------------
         # Query to get number of operations by status and by state for US (and outlying islands)
         us_return = db.session.query(
@@ -443,6 +459,12 @@ def products_process():
     if request.method != "POST":
         return "POST to re-process data for World view"
     else:
+        # Authenticate key
+        headers = request.headers
+        auth = headers.get("key")
+        if auth != key_get("integrity_app_process"):
+            return jsonify({"message": "ERROR: Unauthorized"}), 401
+        
         country_items = db.session.query(
         coalesce(OrganicItem.ci_nopCatName,
         OrganicItem.ci_itemList,
