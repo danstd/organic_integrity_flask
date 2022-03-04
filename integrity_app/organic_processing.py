@@ -8,12 +8,12 @@ import datetime
 import matplotlib.pyplot as plt
 from os import sep
 from sqlalchemy.sql.functions import coalesce
-from api_key_get import key_get
+from integrity_app.api_key_get import key_get
 
 # Set file path variables
 static = "integrity_app" + sep + "integrity_app/static" + sep
 static_img = "integrity_app" + sep + "integrity_app/static" + sep + "images" + sep
-
+KEY_PATH = "C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv"
 # Set plot parameters
 plt.rcParams.update({"font.size": 22})
 
@@ -29,7 +29,7 @@ def world_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process"):
+        if auth != key_get("integrity_app_process", KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
 
         # op_status_country.csv------------------------
@@ -263,7 +263,7 @@ def us_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process"):
+        if auth != key_get("integrity_app_process", KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
         
         # us_table.csv--------------------------
@@ -462,7 +462,7 @@ def products_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process"):
+        if auth != key_get("integrity_app_process",KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
         
         country_items = db.session.query(

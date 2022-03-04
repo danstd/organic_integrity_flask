@@ -2,12 +2,28 @@
 # Set to work with windows (doubled backslashes)
 
 import requests
-from api_key_get import key_get
 import os
 import shutil
 from zipfile import ZipFile
 import sys
 import datetime
+import csv
+
+# Retrieve api keys
+def key_get(key_name, file = "C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv"):
+    # Attempt to read existing file
+    result_dict = dict()
+    try:
+        with open(file, "r", newline="") as csvObj:
+            csvReader = csv.reader(csvObj)
+
+            for row in csvReader:
+                result_dict[row[0]] = row[1]
+
+        return(result_dict[key_name])     
+            
+    except IOError:
+        print("The api key file could not be read!")
 
 # Delete folders from current directory containing folder_name variable
 # if there are more than 5. Set to delete based on sorting by file name - works with standardized timestamp suffix.
