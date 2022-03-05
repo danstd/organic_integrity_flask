@@ -1,5 +1,5 @@
 Country,Applied; APEDA Certified,Certified,Revoked,Surrendered,Suspended,All
-All Countries,1607,41068,101,13969,4057,60802
+All Countries,1605,41010,101,14058,4069,60843
 Afghanistan,0,0,0,2,3,5
 Albania,0,12,0,5,7,24
 Algeria,0,13,0,3,3,19
@@ -19,7 +19,7 @@ Bermuda,0,0,0,1,0,1
 Bolivia (Plurinational State of),0,292,0,110,5,407
 Bosnia and Herzegovina,0,20,0,7,7,34
 Botswana,0,1,0,0,0,1
-Brazil,0,738,0,167,103,1008
+Brazil,0,737,0,167,104,1008
 Bulgaria,0,65,0,24,3,92
 Burkina Faso,0,50,0,11,3,64
 Burundi,0,2,0,0,0,2
@@ -28,7 +28,7 @@ Cameroon,0,5,0,2,0,7
 Canada,0,105,0,38,7,150
 Cayman Islands (The),0,2,0,0,0,2
 Chad,0,4,0,1,0,5
-Chile,0,891,3,486,189,1569
+Chile,0,890,3,486,190,1569
 China,0,1572,19,760,110,2461
 Colombia,0,417,1,106,33,557
 Comoros (The),0,3,0,0,1,4
@@ -39,8 +39,8 @@ Cuba,0,4,0,1,5,10
 Czech Republic (The),0,2,0,2,0,4
 Côte d'Ivoire,0,32,0,7,1,40
 Dominican Republic (The),0,182,3,72,61,318
-Ecuador,0,775,16,241,155,1187
-Egypt,0,112,2,53,7,174
+Ecuador,0,777,16,241,155,1189
+Egypt,0,113,2,52,7,174
 El Salvador,0,14,0,1,1,16
 Estonia,0,0,0,1,0,1
 Ethiopia,0,197,2,151,19,369
@@ -61,7 +61,7 @@ Haiti,0,5,0,0,3,8
 Honduras,0,133,0,82,0,215
 Hong Kong,0,9,0,6,0,15
 Iceland,0,2,0,0,0,2
-India,1607,672,0,88,9,2376
+India,1605,673,0,88,9,2375
 Indonesia,0,198,0,71,28,297
 Iran (Islamic Republic of),0,25,0,25,4,54
 Ireland,0,1,0,0,0,1
@@ -87,7 +87,7 @@ Malaysia,0,15,0,3,2,20
 Maldives,0,0,0,1,0,1
 Mali,0,8,0,2,1,11
 Mauritius,0,10,0,1,0,11
-Mexico,0,2491,0,733,384,3608
+Mexico,0,2487,0,738,384,3609
 Moldova (The Republic of),0,4,1,6,9,20
 Monaco,0,2,0,0,0,2
 Montenegro,0,0,0,1,0,1
@@ -108,7 +108,7 @@ Pakistan,0,52,0,19,3,74
 Panama,0,6,0,7,1,14
 Papua New Guinea,0,17,0,3,0,20
 Paraguay,0,104,0,64,14,182
-Peru,0,1202,2,622,192,2018
+Peru,0,1204,2,622,192,2020
 Philippines (The),0,133,0,38,8,179
 Poland,0,2,0,1,0,3
 Portugal,0,2,0,2,0,4
@@ -151,7 +151,7 @@ Ukraine,0,72,7,48,9,136
 United Arab Emirates (The),0,20,1,20,5,46
 United Kingdom of Great Britain and NorThern Ireland (The),0,10,0,1,0,11
 United States Minor Outlying Islands (The),0,1,0,0,1,2
-United States of America (The),0,23824,20,7011,2182,33037
+United States of America (The),0,23766,20,7096,2192,33074
 Uruguay,0,50,0,26,5,81
 Uzbekistan,0,32,3,10,5,50
 Vanuatu,0,4,0,2,0,6

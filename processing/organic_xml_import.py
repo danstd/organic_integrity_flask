@@ -103,9 +103,11 @@ item_cols = [
 
 # Extract the operation-level data.
 operations = xml_to_pd(root[0], "Operation", op_cols.keys())
+operations = operations.fillna("NULL")
 
 # Extract the item level data.
 items = xml_to_pd(root[1], "Item", item_cols)
+items = items.fillna("NULL")
 
 # Export the results as csv files.
 items.to_csv("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Data\\organic_integrity\\organic_items.csv", index=False, errors = "surrogateescape")

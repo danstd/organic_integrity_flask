@@ -1,45 +1,45 @@
 State,Handling,Crops,Livestock,Wild_Crops
-New Mexico,56,57.0,8.0,0
-California,2263,2455.0,190.0,13.0
-Texas,367,351.0,17.0,2.0
-Vermont,411,750.0,219.0,17.0
-Nevada,52,28.0,6.0,0
-Indiana,125,748.0,484.0,2.0
-North Carolina,172,231.0,179.0,2.0
-Michigan,234,582.0,117.0,8.0
+New Mexico,57,57.0,7.0,0
+California,2247,2432.0,190.0,13.0
+Texas,368,350.0,17.0,2.0
+Vermont,408,750.0,219.0,17.0
+Nevada,53,28.0,6.0,0
+Indiana,127,745.0,483.0,2.0
+North Carolina,172,230.0,179.0,2.0
+Michigan,234,581.0,117.0,8.0
 New Jersey,312,85.0,4.0,2.0
 Washington,85,29.0,17.0,0
-Illinois,295,380.0,50.0,2.0
-New York,581,1481.0,839.0,24.0
+Illinois,293,379.0,50.0,2.0
+New York,581,1484.0,839.0,24.0
 Missouri,103,395.0,175.0,0
-Arkansas,41,55.0,35.0,0
-Colorado,274,257.0,22.0,1.0
-Massachusetts,165,125.0,16.0,0
-Pennsylvania,362,1017.0,785.0,1.0
-Florida,262,134.0,5.0,4.0
+Arkansas,42,55.0,35.0,0
+Colorado,274,255.0,21.0,1.0
+Massachusetts,164,125.0,16.0,0
+Pennsylvania,363,1017.0,785.0,1.0
+Florida,261,134.0,5.0,4.0
 Kansas,58,158.0,9.0,0
-Maryland,95,118.0,31.0,0
-Iowa,139,880.0,223.0,2.0
-Ohio,200,785.0,338.0,15.0
+Maryland,95,116.0,31.0,0
+Iowa,138,875.0,223.0,2.0
+Ohio,198,783.0,337.0,15.0
 Hawaii,58,87.0,8.0,0
-Minnesota,229,694.0,168.0,6.0
-Idaho,121,204.0,32.0,3.0
+Minnesota,228,692.0,168.0,6.0
+Idaho,122,203.0,32.0,3.0
 Mississippi,18,20.0,15.0,0
 Nebraska,68,271.0,22.0,1.0
-Virginia,92,158.0,79.0,1.0
-New Hampshire,41,98.0,21.0,0
+Virginia,92,157.0,79.0,1.0
+New Hampshire,42,98.0,22.0,0
 Wisconsin,339,1461.0,696.0,29.0
-South Dakota,29,113.0,12.0,0
-Tennessee,45,37.0,2.0,1.0
-Connecticut,80,58.0,8.0,0
+South Dakota,29,111.0,12.0,0
+Tennessee,46,36.0,2.0,1.0
+Connecticut,79,58.0,8.0,0
 Maine,228,411.0,109.0,55.0
-North Dakota,50,140.0,7.0,0
+North Dakota,50,139.0,7.0,0
 Utah,110,39.0,2.0,0
 Oklahoma,23,47.0,5.0,0
-Oregon,184,191.0,20.0,2.0
-Arizona,171,62.0,1.0,0
-Kentucky,45,184.0,94.0,3.0
-Montana,71,271.0,26.0,1.0
+Oregon,184,190.0,20.0,2.0
+Arizona,171,61.0,1.0,0
+Kentucky,44,184.0,94.0,3.0
+Montana,70,271.0,26.0,1.0
 Wyoming,16,66.0,1.0,0
 Rhode Island,23,31.0,2.0,0
 Georgia,170,135.0,16.0,1.0

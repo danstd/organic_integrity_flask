@@ -1,54 +1,54 @@
 State,Certified,Revoked,Surrendered,Suspended,All
 Alabama,27,0,9,12,48
 Alaska,2,0,0,0,2
-Arizona,206,0,40,14,260
-Arkansas,102,0,42,6,150
-California,4021,3,832,213,5069
-Colorado,497,0,165,71,733
-Connecticut,134,0,33,6,173
+Arizona,205,0,41,14,260
+Arkansas,103,0,42,6,151
+California,3992,3,870,214,5079
+Colorado,496,0,168,71,735
+Connecticut,133,0,34,6,173
 Delaware,35,0,6,4,45
 District of Columbia,7,0,3,10,20
-Florida,384,0,126,102,612
+Florida,383,0,127,104,614
 Georgia,294,0,77,43,414
 Hawaii,100,0,57,22,179
-Idaho,308,0,84,47,439
-Illinois,655,0,256,40,951
-Indiana,940,0,529,43,1512
-Iowa,1017,1,271,72,1361
+Idaho,308,0,85,47,440
+Illinois,652,0,258,40,950
+Indiana,938,0,530,44,1512
+Iowa,1012,1,276,72,1361
 Kansas,211,1,71,12,295
-Kentucky,239,0,79,65,383
+Kentucky,238,0,80,65,383
 Louisiana,35,0,10,5,50
 Maine,528,3,122,40,693
-Maryland,204,0,27,28,259
-Massachusetts,263,0,70,26,359
-Michigan,758,0,255,77,1090
-Minnesota,912,6,268,74,1260
+Maryland,202,0,29,28,259
+Massachusetts,262,0,71,26,359
+Michigan,757,0,256,77,1090
+Minnesota,910,6,271,74,1261
 Mississippi,27,0,15,4,46
-Missouri,497,0,216,60,773
-Montana,331,0,76,7,414
-Nebraska,345,0,137,40,522
-Nevada,72,0,48,9,129
-New Hampshire,138,1,26,22,187
-New Jersey,394,0,85,42,521
-New Mexico,104,0,103,14,221
-New York,1882,0,418,252,2552
-North Carolina,559,0,273,82,914
-North Dakota,189,0,112,30,331
-Ohio,1006,1,281,72,1360
+Missouri,498,0,217,60,775
+Montana,330,0,77,7,414
+Nebraska,345,0,138,40,523
+Nevada,73,0,48,9,130
+New Hampshire,138,1,27,22,188
+New Jersey,394,0,86,42,522
+New Mexico,102,0,107,14,223
+New York,1884,0,419,252,2555
+North Carolina,558,0,273,83,914
+North Dakota,188,0,113,30,331
+Ohio,1002,1,284,73,1360
 Oklahoma,74,0,21,10,105
-Oregon,341,0,84,29,454
-Pennsylvania,1627,1,372,59,2059
+Oregon,340,0,84,30,454
+Pennsylvania,1628,1,372,60,2061
 Puerto Rico,5,0,3,5,13
 Rhode Island,51,0,7,0,58
 South Carolina,101,0,34,20,155
-South Dakota,136,0,48,19,203
-Tennessee,79,0,47,27,153
-Texas,713,2,240,61,1016
+South Dakota,134,0,50,19,203
+Tennessee,79,0,47,28,154
+Texas,713,2,242,61,1018
 Utah,150,0,42,9,201
-Vermont,868,0,186,36,1090
-Virginia,271,0,123,36,430
-Washington,121,0,28,4,153
+Vermont,867,0,189,36,1092
+Virginia,271,0,123,37,431
+Washington,121,0,29,4,154
 West Virginia,46,0,29,8,83
-Wisconsin,1743,1,507,187,2438
+Wisconsin,1742,1,509,187,2439
 Wyoming,76,0,18,7,101
-All,23825,20,7011,2183,33039
+All,23767,20,7096,2193,33076
