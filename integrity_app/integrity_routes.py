@@ -40,6 +40,8 @@ def world():
 
         scope_set = pd.read_csv(static + "scopes_combo.csv")
         scope_set = scope_set.fillna("")
+        # This should not be necessary but there are issues with rounding on pythonanywhere.
+        scope_set["Percentage"] = round(scope_set["Percentage"],3)
 
         return render_template(
             "world.html",
