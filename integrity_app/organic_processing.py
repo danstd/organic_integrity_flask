@@ -210,6 +210,8 @@ def world_process():
             scope_set[i] = scope_set[i].str.replace("Suspended","")
             scope_set[i] = scope_set[i].str.replace("Certified",i)
 
+        scope_set = scope_set.fillna("")
+
         # Group the combinations.
         # Pandas on pythonanywhere is ignoring the as_index argument.
         # Added reset_index to fix. As a result 'size' column is named '0'
@@ -220,9 +222,7 @@ def world_process():
         #scope_set["Name"] = scope_set["Name"].str.replace(r'(, )+', ", ", regex=True)
 
         # Fix size column name
-        if "0" in scope_set.columns.to_list():
-            scope_set.rename(columns={"0":"size"}, inplace=True)
-        elif 0 in scope_set.columns.to_list():
+        if 0 in scope_set.columns.to_list():
             scope_set.rename(columns={0:"size"}, inplace=True)
 
         # Get the percentage of each combination.
