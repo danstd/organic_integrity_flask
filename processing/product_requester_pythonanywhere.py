@@ -21,20 +21,6 @@ def key_get(key_name, file = "C:\\Users\\daniel\\Documents\\organic_env\\api_key
 KEY = key_get("integrity_app_process")
 headers = {"key": KEY}
 
-# Process world view data.
-url = "https://ddavis11.pythonanywhere.com/world_process"
-res = requests.post(url, headers=headers)
-if res.status_code != 200:
-    print("Unsuccessful request for World view")
-else: print(res.text)
-
-# Process US view data.
-url = "https://ddavis11.pythonanywhere.com/us_process"
-res = requests.post(url, headers=headers)
-if res.status_code != 200:
-    print("Unsuccessful request for U.S. view")
-else: print(res.text)
-
 # Process Products view data.
 url = "https://ddavis11.pythonanywhere.com/products_process"
 res = requests.post(url, headers=headers)

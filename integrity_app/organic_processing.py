@@ -11,9 +11,10 @@ from sqlalchemy.sql.functions import coalesce
 from integrity_app.api_key_get import key_get
 
 # Set file path variables
-static = "integrity_app" + sep + "integrity_app/static" + sep
-static_img = "integrity_app" + sep + "integrity_app/static" + sep + "images" + sep
+static = "integrity_app/static/"
+static_img = "integrity_app/static/images/"
 KEY_PATH = "C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv"
+
 # Set plot parameters
 plt.rcParams.update({"font.size": 22})
 
@@ -29,7 +30,7 @@ def world_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process", KEY_PATH):
+        if auth != key_get("integrity_app_process", file=KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
 
         # op_status_country.csv------------------------
@@ -44,12 +45,12 @@ def world_process():
 
         # Pivot the result by certification status
         country_table = pd.DataFrame(op_return).pivot_table(
-            index="Country", 
-            columns="op_status", 
+            index="Country",
+            columns="op_status",
             values="op_count",
             aggfunc="sum", fill_value=0,
             margins=True)
-            
+
         country_table.reset_index(inplace=True)
 
         # Change names for formatting - put entries without a country listed last, and the summary row first.
@@ -62,7 +63,7 @@ def world_process():
         country_table.loc[country_table["Country"]=="AAALL", "Country"] = "All Countries"
         country_table.loc[country_table["Country"]=="__No Country Name", "Country"] = "No Country Name"
 
-        country_table.to_csv("integrity_app/static/op_status_country.csv", index=False)
+        country_table.to_csv(static + "op_status_country.csv", index=False)
 
         # certification_date.png---------------------------
         # Create certification change plot.
@@ -73,17 +74,18 @@ def world_process():
             ).select_from(OrganicOperation).group_by(
             OrganicOperation.op_statusEffectiveDate,
             OrganicOperation.op_status)
-            
+
         cert_date_df = pd.DataFrame(certification_date)
 
         cert_date_df["year"] = pd.DatetimeIndex(cert_date_df["op_statusEffectiveDate"]).year
 
-        cert_date_df = cert_date_df.rename(columns={"op_status": "Certification Status"})
+        cert_date_df.rename(columns={"op_status": "Certification Status"}, inplace=True)
 
         # Further aggregate by month
         cert_date_df["op_statusEffectiveDate"] = cert_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
 
-        cert_date_df = cert_date_df.loc[cert_date_df["year"] > datetime.datetime.now().year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum()
+        cert_date_df = cert_date_df.loc[cert_date_df["year"] > datetime.datetime.now(
+            ).year-10].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False)["op_count"].sum().reset_index()
 
         sns.set_style("whitegrid")
         sns.set_palette("Set1")
@@ -101,7 +103,7 @@ def world_process():
         plt.ylabel("Monthly Change")
 
         # From https:/stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
-        plt.savefig("integrity_app/static/images/certification_date.png", bbox_inches="tight", pad_inches=0.3)
+        plt.savefig(static_img + "certification_date.png", bbox_inches="tight", pad_inches=0.3)
 
 
         # certification_date_basic.png---------------------
@@ -113,12 +115,12 @@ def world_process():
         trend_df = trend_df.loc[trend_df["op_status"] != "Applied; APEDA Certified"]
 
         # Group by operation count.
-        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum()
+        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum().reset_index()
 
         # Pivot result on operation status
         trend_df = trend_df.pivot_table(
-            index="op_statusEffectiveDate", 
-            columns="op_status", 
+            index="op_statusEffectiveDate",
+            columns="op_status",
             values="op_count",
             aggfunc="sum", fill_value=0,
             margins=False)
@@ -137,7 +139,7 @@ def world_process():
         plt.xticks(rotation=30)
 
         # From https:/stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
-        plt.savefig("integrity_app/static/images/certification_date_basic.png", bbox_inches="tight", pad_inches=0.3)
+        plt.savefig(static_img + "certification_date_basic.png", bbox_inches="tight", pad_inches=0.3)
 
         # scopes_count.csv------------------------
         # Global certification scope get
@@ -179,7 +181,7 @@ def world_process():
         for i in range(0,len(scopes)):
             scopes_count[scopes[i]]= scopes_return[i][0]
 
-        pd.DataFrame(scopes_count, index=[0]).to_csv("integrity_app/static/scopes_count.csv", index=False)
+        pd.DataFrame(scopes_count, index=[0]).to_csv(static + "scopes_count.csv", index=False)
 
         # scopes_combo.csv---------------------------------
         # Get certified count combinations
@@ -209,7 +211,7 @@ def world_process():
             scope_set[i] = scope_set[i].str.replace("Certified",i)
 
         # Group the combinations.
-        # Pandas on pyhtonanywhere is ignoring the as_index argument.
+        # Pandas on pythonanywhere is ignoring the as_index argument.
         # Added reset_index to fix. As a result 'size' column is named '0'
         scope_set = scope_set.groupby(["H", "C", "L", "W"], as_index=False).size().reset_index()
         # Make a name column with meaning for the combinations.
@@ -219,16 +221,10 @@ def world_process():
 
         # Fix size column name
         if "0" in scope_set.columns.to_list():
-            scope_set = scope_set.rename(columns={"0":"size"})
+            scope_set.rename(columns={"0":"size"}, inplace=True)
         elif 0 in scope_set.columns.to_list():
-            scope_set = scope_set.rename(columns={0:"size"})
-            
-        # Fix size column name
-        if "0" in scope_set.columns.to_list():
-            scope_set = scope_set.rename(columns={"0":"size"})
-        elif 0 in scope_set.columns.to_list():
-            scope_set = scope_set.rename(columns={0:"size"})
-            
+            scope_set.rename(columns={0:"size"}, inplace=True)
+
         # Get the percentage of each combination.
         total = sum(scope_set["size"])
 
@@ -247,9 +243,9 @@ def world_process():
             ,inplace=True)
         #scopes_combo_cols=["Handling (H)", "Crops (C)", "Livestock (L)", "Wild Crops (W)", "Percentage"]
 
-        scope_set = scope_set.fillna("")    
+        scope_set = scope_set.fillna("")
 
-        scope_set.to_csv("integrity_app/static/scopes_combo.csv", index=False)
+        scope_set.to_csv(static + "scopes_combo.csv", index=False)
 
         return "The world view data was processed!"
 
@@ -263,9 +259,9 @@ def us_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process", KEY_PATH):
+        if auth != key_get("integrity_app_process", file=KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
-        
+
         # us_table.csv--------------------------
         # Query to get number of operations by status and by state for US (and outlying islands)
         us_return = db.session.query(
@@ -276,15 +272,15 @@ def us_process():
             OrganicOperation.opPA_state,
             OrganicOperation.op_status).filter(OrganicOperation.opPA_country.like("%United States%")).all()
 
-        us_pivot = pd.DataFrame(us_return).pivot_table(index="State", 
-            columns="op_status", 
+        us_pivot = pd.DataFrame(us_return).pivot_table(index="State",
+            columns="op_status",
             values="op_count",
             aggfunc="sum", fill_value=0,
             margins=True)
-            
+
         us_pivot.reset_index(inplace=True)
 
-        us_pivot.to_csv("integrity_app/static/us_table.csv", index=False)
+        us_pivot.to_csv(static + "us_table.csv", index=False)
 
         # us_scopes_return.csv-------------------------
         # Query to get number of certified operations by scope for the US.
@@ -352,7 +348,7 @@ def us_process():
 
         us_scopes_return = pd.DataFrame(us_scopes_return).fillna("0")
 
-        us_scopes_return.to_csv("integrity_app/static/us_scopes_return.csv", index=False)
+        us_scopes_return.to_csv(static + "us_scopes_return.csv", index=False)
 
         # us_certification_date.png------------------------------
         # Create US certification change plot.
@@ -364,19 +360,19 @@ def us_process():
             OrganicOperation.op_statusEffectiveDate,
             OrganicOperation.op_status
             ).filter(OrganicOperation.opPA_country.like("%United States%")).all()
-            
+
         us_date_df = pd.DataFrame(us_date)
 
         us_date_df["year"] = pd.DatetimeIndex(us_date_df["op_statusEffectiveDate"]).year
 
-        us_date_df = us_date_df.rename(columns={"op_status": "Certification Status"})
-            
+        us_date_df.rename(columns={"op_status": "Certification Status"}, inplace=True)
+
         # Further aggregate by month
         us_date_df["op_statusEffectiveDate"] = us_date_df["op_statusEffectiveDate"].apply(lambda x: x.replace(day=1))
 
         us_date_df = us_date_df.loc[us_date_df["year"] > datetime.datetime.now().year-10
             ].groupby(["Certification Status","op_statusEffectiveDate"], as_index=False
-            )["op_count"].sum()
+            )["op_count"].sum().reset_index()
 
         sns.set_style("whitegrid")
         sns.set_palette("Set1")
@@ -387,7 +383,7 @@ def us_process():
         plt.xlabel("Date")
         plt.ylabel("Monthly Change")
 
-        plt.savefig("integrity_app/static/images/us_certification_date.png", bbox_inches="tight", pad_inches=0.3)
+        plt.savefig(static_img + "us_certification_date.png", bbox_inches="tight", pad_inches=0.3)
 
 
         # us_certification_date_basic.png---------------------------
@@ -409,11 +405,11 @@ def us_process():
         trend_df = trend_df.loc[trend_df['year'] > 2018]
         trend_df = trend_df.loc[trend_df["op_status"] != "Applied; APEDA Certified"]
 
-        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum()
+        trend_df = trend_df.groupby(['op_status','op_statusEffectiveDate'], as_index=False)['op_count'].sum().reset_index()
 
         trend_df = trend_df.pivot_table(
-            index="op_statusEffectiveDate", 
-            columns="op_status", 
+            index="op_statusEffectiveDate",
+            columns="op_status",
             values="op_count",
             aggfunc="sum", fill_value=0,
             margins=False)
@@ -435,7 +431,7 @@ def us_process():
         plt.ylabel('Monthly Change')
         plt.xticks(rotation=30)
 
-        plt.savefig("integrity_app/static/images/us_certification_date_basic.png", bbox_inches="tight", pad_inches=0.3)
+        plt.savefig(static_img + "us_certification_date_basic.png", bbox_inches="tight", pad_inches=0.3)
 
         # us_certification_count.png-------------
         # Plot total count per month using calculations in us_certification_date_basic.png section
@@ -448,7 +444,7 @@ def us_process():
         plt.ylabel('Certified Operations')
         plt.xticks(rotation=30)
 
-        plt.savefig("integrity_app/static/images/us_certification_count.png", bbox_inches="tight", pad_inches=0.3)
+        plt.savefig(static_img + "us_certification_count.png", bbox_inches="tight", pad_inches=0.3)
 
         return "The United States view data was processed!"
 
@@ -462,9 +458,9 @@ def products_process():
         # Authenticate key
         headers = request.headers
         auth = headers.get("key")
-        if auth != key_get("integrity_app_process",KEY_PATH):
+        if auth != key_get("integrity_app_process", file=KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
-        
+
         country_items = db.session.query(
         coalesce(OrganicItem.ci_nopCatName,
         OrganicItem.ci_itemList,
@@ -491,15 +487,15 @@ def products_process():
             for entry in temp:
                 item_new.append([entry,item[1], item[2]])
 
-        items = pd.DataFrame(item_new)
+        items = pd.DataFrame(item_new, columns=["Items","Scope","Country"])
 
         # Replace anything inside quotes. These are most likely brand names.
-        items[0] = items[0].str.replace("[\"|\“|\”].*[\"|\“|\”]|[\"|\“|\”]","",regex=True)
-        
+        items["Items"] = items["Items"].str.replace("[\"|\“|\”].*[\"|\“|\”]|[\"|\“|\”]","",regex=True)
+
         # Trim the items
-        items[0] = items[0].str.strip()
+        items["Items"] = items["Items"].str.strip()
         # Convert casing
-        items[0] = items[0].str.lower()
+        items["Items"] = items["Items"].str.lower()
         # Get rid of empty rows or rows consisting of some known adjectives.
         bad_items = ["",
         "natural",
@@ -513,40 +509,52 @@ def products_process():
         "herbs",
         "herb",
         "oils"]
-        items = items.loc[~(items[0].isin(bad_items))]
+        items = items.loc[~(items["Items"].isin(bad_items))]
 
         # Aggregate
-        item_count = items.groupby([0,1], as_index=False).size().sort_values("size",ascending=False)
+        item_count = items.groupby(["Items","Scope"], as_index=False).size().reset_index()
+        if 0 in item_count.columns.to_list():
+            item_count.rename(columns={0:"size"}, inplace=True)
+        item_count.sort_values("size",ascending=False, inplace=True)
 
-        item_count_c = item_count.loc[item_count[1] == "Crops"]
-        item_count_l = item_count.loc[item_count[1] == "Livestock"]
-        item_count_h = item_count.loc[item_count[1] == "Handling"]
-        item_count_w = item_count.loc[item_count[1] == "Wild Crops"]
+        item_count_c = item_count.loc[item_count["Scope"] == "Crops"]
+        item_count_l = item_count.loc[item_count["Scope"] == "Livestock"]
+        item_count_h = item_count.loc[item_count["Scope"] == "Handling"]
+        item_count_w = item_count.loc[item_count["Scope"] == "Wild Crops"]
 
-        item_top = pd.concat([item_count_c[0:10], item_count_l[0:10], item_count_h[0:10], item_count_w[0:10]]).reset_index()
+        #item_top = pd.concat([item_count_c[0:10], item_count_l[0:10], item_count_h[0:10], item_count_w[0:10]]).reset_index()
 
-        item_count_c.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_crops.csv",index=False)
-        item_count_l.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_livestock.csv",index=False)
-        item_count_h.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_handling.csv",index=False)
-        item_count_w.iloc[0:10,[0,2]].to_csv("integrity_app/static/top_items_wild.csv",index=False)
+        item_count_c.iloc[0:10,[0,2]].to_csv(static + "top_items_crops.csv",index=False)
+        item_count_l.iloc[0:10,[0,2]].to_csv(static + "top_items_livestock.csv",index=False)
+        item_count_h.iloc[0:10,[0,2]].to_csv(static + "top_items_handling.csv",index=False)
+        item_count_w.iloc[0:10,[0,2]].to_csv(static + "top_items_wild.csv",index=False)
 
         # top_by_country.csv-------------
-        country_item_agg = items.groupby([0,2],as_index=False).size().sort_values("size", ascending=False)
-        country_item_agg = country_item_agg.groupby(2).head(1)
-        country_item_agg = country_item_agg.rename(columns={0:"Product", 2:"Country", "size":"Count"})
-        country_item_agg = country_item_agg[["Country", "Product", "Count"]]
-        country_item_agg.to_csv("integrity_app/static/top_by_country.csv",index=False)
+        country_item_agg = items.groupby(["Items","Country"],as_index=False).size().reset_index()
+        if 0 in country_item_agg.columns.to_list():
+            country_item_agg.rename(columns={0:"size"}, inplace=True)
+        country_item_agg.sort_values("size", ascending=False, inplace=True)
+
+        country_item_agg = country_item_agg.groupby("Country").head(1)
+        country_item_agg.rename(columns={"size":"Count"}, inplace=True)
+        country_item_agg = country_item_agg[["Country", "Items", "Count"]]
+        country_item_agg.to_csv(static + "top_by_country.csv",index=False)
 
         # top_by_country_scope.csv---------
         # Get count by country and scope
-        country_item_scope_agg = items.groupby([0,1,2],as_index=False).size().sort_values("size", ascending=False)
-        country_item_scope_agg.rename(columns={0:"product" ,1:"scope" ,2:"country" ,"size":"count"},inplace=True)
-        country_item_scope_agg = country_item_scope_agg.groupby(["country","scope"]).head(1)
-        country_item_scope_agg["product-count"] = country_item_scope_agg["product"] + " (" + country_item_scope_agg["count"].astype(str) + ")"
+        country_item_scope_agg = items.groupby(["Items","Scope","Country"],as_index=False).size().reset_index()
+        if 0 in country_item_scope_agg.columns.to_list():
+            country_item_scope_agg.rename(columns={0:"size"}, inplace=True)
+        country_item_scope_agg.sort_values("size", ascending=False, inplace=True)
 
-        top_by_country_scope = country_item_scope_agg.pivot("country","scope","product-count")
+        # May need to work out this section.
+        country_item_scope_agg.rename(columns={"size":"Count"}, inplace=True)
+        country_item_scope_agg = country_item_scope_agg.groupby(["Country","Scope"]).head(1)
+        country_item_scope_agg["product-count"] = country_item_scope_agg["Items"] + " (" + country_item_scope_agg["Count"].astype(str) + ")"
+
+        top_by_country_scope = country_item_scope_agg.pivot("Country","Scope","product-count")
         top_by_country_scope.reset_index(inplace=True)
         top_by_country_scope.fillna("",inplace=True)
-        top_by_country_scope.to_csv("integrity_app/static/top_by_country_scope.csv",index=False)
-    
+        top_by_country_scope.to_csv(static + "top_by_country_scope.csv",index=False)
+
         return "The products view data was processed!"
