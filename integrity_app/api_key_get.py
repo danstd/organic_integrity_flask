@@ -18,7 +18,7 @@ def key_get(key_name, file = "api_keys.csv"):
 	
 if __name__ == "__main__":
     try:
-        with open("C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv", "r", newline="") as csvObj:
+        with open("C:\\Users\\daniel\\Documents\\organic_env\\authentication\\api_keys.csv", "r", newline="") as csvObj:
             csvReader = csv.reader(csvObj)
             for row in csvReader:
                 print(row[0] + ": " + row[1]) 
