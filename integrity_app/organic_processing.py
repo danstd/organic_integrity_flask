@@ -13,13 +13,19 @@ from integrity_app.api_key_get import key_get
 # Set file path variables
 static = "integrity_app/static/"
 static_img = "integrity_app/static/images/"
-KEY_PATH = "C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv"
+KEY_PATH = "C:\\Users\\daniel\\Documents\\organic_env\\authentication\\api_keys.csv"
 
 # Set plot parameters
 plt.rcParams.update({"font.size": 22})
 
 # Key verification: https://blog.ruanbekker.com/blog/2018/06/01/add-a-authentication-header-to-your-python-flask-app/
 
+# Get list index by name; useful for pandas iloc.
+def col_index(col_list, col):
+    for i in range(0,len(col_list)):
+        if col_list[i] == col:
+            return i
+    return ("not found")
 
 #----------------World page route-------------------------
 @app.route("/world_process", methods=["GET", "POST"])
@@ -524,10 +530,13 @@ def products_process():
 
         #item_top = pd.concat([item_count_c[0:10], item_count_l[0:10], item_count_h[0:10], item_count_w[0:10]]).reset_index()
 
-        item_count_c.iloc[0:10,[0,2]].to_csv(static + "top_items_crops.csv",index=False)
-        item_count_l.iloc[0:10,[0,2]].to_csv(static + "top_items_livestock.csv",index=False)
-        item_count_h.iloc[0:10,[0,2]].to_csv(static + "top_items_handling.csv",index=False)
-        item_count_w.iloc[0:10,[0,2]].to_csv(static + "top_items_wild.csv",index=False)
+        item_index = col_index(item_count.columns.tolist(), "Items")
+        size_index = col_index(item_count.columns.tolist(), "size")
+
+        item_count_c.iloc[0:10,[item_index,size_index]].to_csv(static + "top_items_crops.csv",index=False)
+        item_count_l.iloc[0:10,[item_index,size_index]].to_csv(static + "top_items_livestock.csv",index=False)
+        item_count_h.iloc[0:10,[item_index,size_index]].to_csv(static + "top_items_handling.csv",index=False)
+        item_count_w.iloc[0:10,[item_index,size_index]].to_csv(static + "top_items_wild.csv",index=False)
 
         # top_by_country.csv-------------
         country_item_agg = items.groupby(["Items","Country"],as_index=False).size().reset_index()

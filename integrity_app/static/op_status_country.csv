@@ -1,11 +1,11 @@
 Country,Applied; APEDA Certified,Certified,Revoked,Surrendered,Suspended,All
-All Countries,1605,41011,101,14058,4069,60844
+All Countries,1235,40892,100,14512,4117,60856
 Afghanistan,0,0,0,2,3,5
 Albania,0,12,0,5,7,24
 Algeria,0,13,0,3,3,19
-Argentina,0,1355,1,734,13,2103
-Armenia,0,24,0,14,8,46
-Australia,0,538,0,89,5,632
+Argentina,0,1353,1,736,13,2103
+Armenia,0,23,0,14,9,46
+Australia,0,538,0,98,5,641
 Austria,0,7,0,1,0,8
 Azerbaijan,0,6,0,0,1,7
 Bahamas (The),0,2,0,0,0,2
@@ -14,60 +14,60 @@ Bangladesh,0,1,0,0,0,1
 Belarus,0,6,0,1,1,8
 Belgium,0,18,0,9,1,28
 Belize,0,5,0,4,1,10
-Benin,0,12,0,2,0,14
+Benin,0,13,0,2,0,15
 Bermuda,0,0,0,1,0,1
-Bolivia (Plurinational State of),0,292,0,110,5,407
+Bolivia (Plurinational State of),0,269,0,136,5,410
 Bosnia and Herzegovina,0,20,0,7,7,34
 Botswana,0,1,0,0,0,1
-Brazil,0,737,0,167,104,1008
-Bulgaria,0,65,0,24,3,92
-Burkina Faso,0,50,0,11,3,64
+Brazil,0,732,0,180,115,1027
+Bulgaria,0,48,0,43,3,94
+Burkina Faso,0,51,0,11,3,65
 Burundi,0,2,0,0,0,2
 Cambodia,0,55,0,13,0,68
 Cameroon,0,5,0,2,0,7
-Canada,0,105,0,38,7,150
+Canada,0,104,0,39,7,150
 Cayman Islands (The),0,2,0,0,0,2
 Chad,0,4,0,1,0,5
-Chile,0,890,3,486,190,1569
-China,0,1572,19,760,110,2461
-Colombia,0,417,1,106,33,557
+Chile,0,876,3,500,192,1571
+China,0,1569,19,786,110,2484
+Colombia,0,413,1,110,33,557
 Comoros (The),0,3,0,0,1,4
 Congo (The Democratic Republic of The),0,17,0,1,3,21
-Costa Rica,0,100,0,38,19,157
+Costa Rica,0,99,0,39,19,157
 Croatia,0,0,0,2,0,2
 Cuba,0,4,0,1,5,10
 Czech Republic (The),0,2,0,2,0,4
 Côte d'Ivoire,0,32,0,7,1,40
-Dominican Republic (The),0,182,3,72,61,318
-Ecuador,0,777,16,241,155,1189
-Egypt,0,113,2,52,7,174
+Dominican Republic (The),0,182,3,73,61,319
+Ecuador,0,775,15,246,155,1191
+Egypt,0,107,2,57,8,174
 El Salvador,0,14,0,1,1,16
 Estonia,0,0,0,1,0,1
-Ethiopia,0,197,2,151,19,369
+Ethiopia,0,194,2,155,19,370
 Fiji,0,8,0,4,0,12
 France,0,47,0,14,4,65
-French Polynesia,0,12,0,3,2,17
+French Polynesia,0,11,0,4,2,17
 Gambia (The),0,0,0,0,1,1
 Georgia,0,5,0,2,0,7
 Germany,0,80,0,24,1,105
 Ghana,0,54,0,14,4,72
 Greece,0,21,0,7,0,28
 Grenada,0,8,0,2,2,12
-Guatemala,0,145,1,15,10,171
+Guatemala,0,146,1,15,10,172
 Guinea,0,2,0,0,0,2
 Guinea-Bissau,0,1,0,0,0,1
 Guyana,0,1,0,0,0,1
 Haiti,0,5,0,0,3,8
-Honduras,0,133,0,82,0,215
-Hong Kong,0,9,0,6,0,15
+Honduras,0,132,0,82,1,215
+Hong Kong,0,7,0,8,0,15
 Iceland,0,2,0,0,0,2
-India,1605,673,0,88,9,2375
+India,1235,784,0,210,9,2238
 Indonesia,0,198,0,71,28,297
-Iran (Islamic Republic of),0,25,0,25,4,54
+Iran (Islamic Republic of),0,24,0,26,4,54
 Ireland,0,1,0,0,0,1
 Israel,0,48,0,24,0,72
 Italy,0,179,0,150,19,348
-Jamaica,0,10,0,9,6,25
+Jamaica,0,4,0,15,6,25
 Japan,0,113,0,22,0,135
 Jordan,0,7,0,1,1,9
 Kazakhstan,0,5,2,17,13,37
@@ -87,18 +87,18 @@ Malaysia,0,15,0,3,2,20
 Maldives,0,0,0,1,0,1
 Mali,0,8,0,2,1,11
 Mauritius,0,10,0,1,0,11
-Mexico,0,2487,0,738,384,3609
+Mexico,0,2486,0,742,387,3615
 Moldova (The Republic of),0,4,1,6,9,20
 Monaco,0,2,0,0,0,2
 Montenegro,0,0,0,1,0,1
 Morocco,0,201,1,47,51,300
 Mozambique,0,8,0,1,0,9
 Myanmar,0,10,0,13,0,23
-Namibia,0,16,0,5,0,21
-NeTherlands (The),0,85,0,57,9,151
-Nepal,0,61,0,29,8,98
+Namibia,0,15,0,6,0,21
+NeTherlands (The),0,84,0,58,9,151
+Nepal,0,63,0,32,8,103
 New Caledonia,0,2,0,0,0,2
-Nicaragua,0,91,0,32,10,133
+Nicaragua,0,90,0,33,10,133
 Niger (The),0,1,0,1,0,2
 Nigeria,0,22,0,7,0,29
 Norway,0,0,0,1,0,1
@@ -107,53 +107,53 @@ Pakistan,0,52,0,19,3,74
 "Palestine, State of",0,2,0,1,0,3
 Panama,0,6,0,7,1,14
 Papua New Guinea,0,17,0,3,0,20
-Paraguay,0,104,0,64,14,182
-Peru,0,1204,2,622,192,2020
-Philippines (The),0,133,0,38,8,179
+Paraguay,0,103,0,65,14,182
+Peru,0,1189,2,636,196,2023
+Philippines (The),0,132,0,39,8,179
 Poland,0,2,0,1,0,3
 Portugal,0,2,0,2,0,4
 Puerto Rico,0,2,0,0,0,2
 Qatar,0,1,0,0,0,1
 Romania,0,3,0,1,1,5
-Russian Federation (The),0,51,3,53,17,124
+Russian Federation (The),0,55,3,53,17,128
 Rwanda,0,21,0,8,0,29
 Saint Lucia,0,1,0,0,0,1
 Samoa,0,5,0,0,0,5
 Sao Tome and Principe,0,1,0,1,0,2
-Saudi Arabia,0,3,0,6,0,9
+Saudi Arabia,0,2,0,7,0,9
 Senegal,0,4,0,3,2,9
-Serbia,0,48,0,29,3,80
+Serbia,0,47,0,30,3,80
 Seychelles,0,0,0,1,0,1
 Sierra Leone,0,11,0,3,0,14
 Singapore,0,24,0,12,4,40
 Solomon Islands,0,1,0,0,0,1
 Somalia,0,3,0,3,0,6
-South Africa,0,216,0,78,8,302
+South Africa,0,214,0,80,8,302
 Spain,0,83,0,36,4,123
 Sri Lanka,0,285,0,69,4,358
 Sudan (The),0,10,0,2,2,14
 Swaziland,0,3,0,0,0,3
 Sweden,0,0,0,0,1,1
 Switzerland,0,12,0,1,0,13
-Taiwan (Province of China),0,36,0,10,4,50
+Taiwan (Province of China),0,33,0,14,4,51
 Tajikistan,0,2,0,2,0,4
 "Tanzania, United Republic of",0,33,0,15,3,51
-Thailand,0,304,1,183,32,520
+Thailand,0,303,1,185,32,521
 The Republic of North Macedonia,0,2,0,5,0,7
 Timor-Leste,0,4,0,0,0,4
-Togo,0,44,0,7,0,51
+Togo,0,45,0,7,0,52
 Tonga,0,0,0,1,0,1
 Trinidad and Tobago,0,7,0,1,0,8
 Tunisia,0,401,6,120,63,590
-Turkey,0,837,5,498,85,1425
-Uganda,0,101,0,34,4,139
-Ukraine,0,72,7,48,9,136
+Turkey,0,833,5,503,86,1427
+Uganda,0,102,0,34,4,140
+Ukraine,0,71,7,49,9,136
 United Arab Emirates (The),0,20,1,20,5,46
 United Kingdom of Great Britain and NorThern Ireland (The),0,10,0,1,0,11
 United States Minor Outlying Islands (The),0,1,0,0,1,2
-United States of America (The),0,23767,20,7096,2192,33075
-Uruguay,0,50,0,26,5,81
-Uzbekistan,0,32,3,10,5,50
+United States of America (The),0,23656,20,7243,2216,33135
+Uruguay,0,49,0,27,5,81
+Uzbekistan,0,30,3,12,5,50
 Vanuatu,0,4,0,2,0,6
 Venezuela (Bolivarian Republic of),0,0,0,2,0,2
 Viet Nam,0,150,1,91,15,257

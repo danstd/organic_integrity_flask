@@ -10,7 +10,7 @@ import datetime
 import csv
 
 # Retrieve api keys
-def key_get(key_name, file = "C:\\Users\\daniel\\Documents\\organic_env\\api_keys.csv"):
+def key_get(key_name, file = "C:\\Users\\daniel\\Documents\\organic_env\\authentication\\api_keys.csv"):
     # Attempt to read existing file
     result_dict = dict()
     try:

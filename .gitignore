@@ -1,0 +1,5 @@
+authentication/**
+integrity_download?/**
+*.csv
+*.png
+*.xml
