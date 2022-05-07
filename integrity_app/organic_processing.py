@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from os import sep
 from sqlalchemy.sql.functions import coalesce
 from integrity_app.api_key_get import key_get
+import json
+import joblib
 
 # Set file path variables
 static = "integrity_app/static/"
@@ -452,6 +454,9 @@ def us_process():
 
         plt.savefig(static_img + "us_certification_count.png", bbox_inches="tight", pad_inches=0.3)
 
+        # Save US trend data for use in US forecasting route.
+        trend_df.to_csv(static + "us_trend_data.csv", index=False)
+
         return "The United States view data was processed!"
 
 
@@ -567,3 +572,223 @@ def products_process():
         top_by_country_scope.to_csv(static + "top_by_country_scope.csv",index=False)
 
         return "The products view data was processed!"
+
+#----------------US Forecasting page route-------------------------
+@app.route("/us_forecast_process", methods=["GET", "POST"])
+def us_forecasting_process():
+    if request.method != "POST":
+        return "POST to re-process data for World view"
+    else:
+        # Authenticate key
+        headers = request.headers
+        auth = headers.get("key")
+        if auth != key_get("integrity_app_process", file=KEY_PATH):
+            return jsonify({"message": "ERROR: Unauthorized"}), 401
+        else:
+
+            # Read in the saved model.
+            us_forecast = joblib.load(file_path+"us_certification_forecast_model.pkl")
+
+            # Read in data calculated by US view.
+            try:
+                trend_df = pd.read_csv(static + "us_trend_data.csv")
+            except FileNotFoundError:
+                return jsonify({"message": "ERROR: us_process must be run at least once before this process. Please POST to us_process"}), 400
+
+            # Use trend data for time series forecasting.
+            trend = trend_df.Trend
+
+            # Remove the current month from the data, as the full count is not in place.
+            c_y = str(datetime.datetime.now().year)
+            c_m = str(datetime.datetime.now().month)
+            c_start_m = c_y + "-" + c_m + "-01"
+            current = datetime.datetime.strptime(c_start_m, "%Y-%m-%d")
+
+            trend = trend.loc[trend.index < current]
+
+            # Remove data from before the last date that the model was previously trained on.
+            # Get a record of the last date used to train the model.
+            file_path = "C:\\Users\\daniel\\Documents\\organic_env\\organic_integrity_flask\\processing\\"
+            with open(file_path+"us_certification_forecast_model.json", 'r') as file:
+                last_trained_date = json.load(file)
+                
+            last_trained_date = datetime.datetime.strptime(last_trained_date["date"], "%Y-%m-%d")
+
+
+            # Walk forward validation procedure adapted from
+            # https://machinelearningmastery.com/random-forest-for-time-series-forecasting/
+            # Transform the trend data into a format for supervised learning.
+            # Get the trends column and the shifted data column into a new dataframe. Extract values.
+            trends = pd.DataFrame(trend)
+
+            # Group by month.
+            trends = trends.reset_index()
+            trends["Month"] = trends.op_statusEffectiveDate.apply(lambda x: datetime.datetime.strftime(x, "%Y-%m"))
+            trends = trends.groupby("Month", as_index=False)["Trend"].sum()
+
+            trends["Shift_Back_1"] = trends["Trend"]
+
+            trends.Shift_Back_1 = trends.Shift_Back_1.shift(1)
+
+            trends["Shift_Back_2"] = trends.Shift_Back_1.shift(1)
+
+            trends["Shift_Back_3"] = trends.Shift_Back_1.shift(2)
+
+            # Reorganize the columns.
+            trends = trends[["Year", "Month", "Shift_Back_3", "Shift_Back_2", "Shift_Back_1", "Trend"]]
+
+            trends = trends.dropna()
+
+            new_history = trends.loc[trends.index > last_trained_date]
+
+            # If there is new data, retrain the model on all data.
+            # This approach may be modified later.
+            if len(new_history) > 0:
+                # Save the previous model.
+                model_name = "us_certification_forecast_model"
+                model_extension = ".pkl"
+                current = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H-%M-%S")
+                joblib.dump(us_forecast,file_path + model_name + current + model_extension)
+
+                trend_vals = trends.values
+
+                hist_x = trend_vals[:, :-2]
+                hist_y = trend_vals[:, -1]
+
+                # Fit the data on the model.
+                us_forecast.fit(hist_x, hist_y)
+                
+                joblib.dump(us_forecast,file_path + model_name + model_extension)
+
+                # For future predictions, get a record of the last date the model was trained on.
+                last_date = str(current - datetime.timedelta(days=1))
+                # Cut out time portion.
+                last_date = last_date[0:10]
+
+                last_date = {"date": last_date}
+                with open(file_path+"us_certification_forecast_model.json", 'w') as file:
+                    json.dump(last_date, file)
+
+                max_date = last_date
+
+            else:
+                # Get last date from file.
+                with open(file_path+"us_certification_forecast_model.json", 'r') as file:
+                        max_date = json.load(file)
+
+
+            # Get the last month in the series.
+            pred_month = max_date["date"]
+            pred_month_dt = datetime.datetime.strptime(pred_month, "%Y-%m-%d")
+            upcoming_months = month_accumulate(pred_month_dt, 6)
+
+            # Get the last value in the dataset.
+            last_month = trends.loc[trends["Date"] == pred_month].values[0]
+
+            # Predict for the next months.
+            predictions = list()
+            for pred_date in upcoming_months:
+                # Copy the last month to be predicted.
+                pred_month = last_month
+                
+                pred_month[0] = int(pred_date.year)
+                pred_month[1] = int(pred_date.month)
+                pred_month[2] = last_month[3] # Assign last month's shift back 2 to 3.
+                pred_month[3] = last_month[4] # Assign last month's shift back 1 to 2.
+                pred_month[4] = last_month[5] # Assign last month's value(trend) to shift back 1.
+                pred_month[6] = pred_date
+
+                # As in the notebook used to develop this model, not all of the features are used.
+                temp_val =  us_forecast.predict(pred_month[3:-2].reshape(1, -1))[0]
+                
+                pred_month[5] = temp_val
+                
+                last_month = pred_month
+                predictions.append(pred_month.copy())
+            
+            # Fix date column.
+            trends["Date"] = trends["Date"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d"))
+
+            # Combine the pred_results of the prediction with the most recent past trend records.
+            # Plot the result.
+            pred_results = pd.DataFrame(predictions, columns = trends.columns)
+            pred_results["Type"] = "Predicted"
+            trends["Type"] = "Actual"
+            trend_pred_df = pd.concat([trends, pred_results])
+            trend_pred_df = trend_pred_df.reset_index()
+            # Get about 6 months before the current month
+            trend_pred_df = trend_pred_df.loc[trend_pred_df["Date"] > (pred_month_dt - datetime.timedelta(days=183))]
+            # Reset month column.
+            trend_pred_df = trend_pred_df.sort_values("Date")
+
+            # Duplicate the last record of known value in order to show a smooth continuation.
+            max_actual = trend_pred_df.loc[trend_pred_df["Type"]=="Actual","Date"].max()
+            line_continue = trend_pred_df.loc[trend_pred_df["Date"]==max_actual].copy()
+            line_continue["Type"] = "Predicted"
+            trend_pred_show = pd.concat([trend_pred_df,line_continue]).reset_index()
+
+            sns.set_style('whitegrid')
+            sns.set_palette('dark')
+            sns.set_context("poster")
+
+            #sns.lineplot(data=trend, x="Month", y="Trend", hue="Type")
+            sns.relplot(data=trend_pred_show, x='Date', y='Trend', kind='line', hue='Type',height=10, aspect=1.5)
+            #plt.title('Certification Changes Over Time')
+            plt.xlabel('Date')
+            plt.ylabel('Monthly Change In Certification')
+            plt.xticks(rotation=30)
+            plt.savefig(static_img + "US_forecast_month_change.png", bbox_inches="tight", pad_inches=0.3)
+
+
+            # Calculate the total count of overall operations throughout the timeframe of the prediction.
+            start_count = trend_df.loc[trend_pred_df.Date.min(), "total_count"]
+
+            first=True
+            count_list = list()
+            month_list = list()
+            for index, row in trend_pred_df.iterrows():
+                if first:
+                    current_count = start_count
+                    first=False
+                else:
+                    current_count = current_count + row["Trend"]
+                month_list.append(row["Date"])
+                count_list.append(current_count)
+            count_df = pd.DataFrame(zip(month_list, count_list), columns=["Date", "total_count"])
+
+            trend_pred_count_df = trend_pred_df.merge(right=count_df,on="Date",how="inner")
+
+            # Duplicate the last record of known value in order to show a smooth continuation.
+            max_actual = trend_pred_count_df.loc[trend_pred_count_df["Type"]=="Actual","Date"].max()
+
+            line_continue = trend_pred_count_df.loc[trend_pred_count_df["Date"]==max_actual].copy()
+            line_continue["Type"] = "Predicted"
+
+            trend_pred_count_show = pd.concat([trend_pred_count_df,line_continue]).reset_index()
+
+            sns.set_style('whitegrid')
+            sns.set_palette('dark')
+            sns.set_context("poster")
+
+            #sns.lineplot(data=trend, x="Month", y="Trend", hue="Type")
+            sns.relplot(data=trend_pred_count_show, x='Date', y='total_count', kind='line', hue='Type',height=10, aspect=1.5)
+            #plt.title('Certification Changes Over Time')
+            plt.xlabel('Date')
+            plt.ylabel('Number of Certified Operations')
+            plt.xticks(rotation=30)
+            plt.savefig(static_img + "US_forecast_total_count.png", bbox_inches="tight", pad_inches=0.3)
+
+
+        return "The US forecasting view data was processed!"
+
+    # Get the first of each month from a given starting timestamp for the number in months.
+def month_accumulate(start_month, num_months):
+    month_list = list()
+    temp = start_month
+    for i in range(0,num_months):
+        next_month = temp + datetime.timedelta(days=32)
+        day_subtract = next_month.day - 1
+        next_month = next_month - datetime.timedelta(days=day_subtract)
+        month_list.append(next_month)
+        temp = next_month
+    return month_list
