@@ -1,54 +1,54 @@
 State,Certified,Revoked,Surrendered,Suspended,All
-Alabama,26,0,9,12,47
+Alabama,25,0,10,12,47
 Alaska,2,0,0,0,2
-Arizona,204,0,41,15,260
-Arkansas,102,0,42,7,151
-California,3987,3,873,216,5079
-Colorado,495,0,169,72,736
-Connecticut,133,0,34,6,173
-Delaware,35,0,6,4,45
+Arizona,205,0,39,15,259
+Arkansas,102,0,43,7,152
+California,3978,3,888,218,5087
+Colorado,494,0,169,72,735
+Connecticut,133,0,32,6,171
+Delaware,35,0,7,4,46
 District of Columbia,7,0,3,10,20
-Florida,383,0,129,105,617
-Georgia,295,0,78,43,416
-Hawaii,99,0,57,23,179
-Idaho,302,0,90,48,440
-Illinois,646,0,265,40,951
-Indiana,926,0,539,47,1512
-Iowa,1009,1,281,72,1363
-Kansas,211,1,71,12,295
-Kentucky,220,0,97,66,383
-Louisiana,35,0,10,5,50
-Maine,525,3,123,42,693
-Maryland,206,0,29,28,263
-Massachusetts,262,0,72,26,360
-Michigan,756,0,261,77,1094
-Minnesota,909,6,274,75,1264
+Florida,384,0,131,104,619
+Georgia,300,0,80,43,423
+Hawaii,106,0,73,23,202
+Idaho,296,0,94,49,439
+Illinois,648,0,268,40,956
+Indiana,932,0,528,47,1507
+Iowa,1008,1,280,72,1361
+Kansas,205,1,76,12,294
+Kentucky,220,0,94,66,380
+Louisiana,36,0,10,5,51
+Maine,525,3,126,42,696
+Maryland,206,0,28,28,262
+Massachusetts,261,0,68,26,355
+Michigan,761,0,258,77,1096
+Minnesota,906,6,279,76,1267
 Mississippi,27,0,15,4,46
-Missouri,497,0,219,60,776
-Montana,328,0,79,7,414
-Nebraska,342,0,141,40,523
-Nevada,73,0,48,9,130
-New Hampshire,141,1,28,22,192
-New Jersey,384,0,96,43,523
-New Mexico,98,0,110,15,223
-New York,1882,0,425,252,2559
-North Carolina,551,0,281,84,916
-North Dakota,186,0,114,31,331
-Ohio,994,1,293,75,1363
+Missouri,493,0,224,60,777
+Montana,328,0,75,7,410
+Nebraska,339,0,144,40,523
+Nevada,73,0,50,9,132
+New Hampshire,131,1,34,22,188
+New Jersey,379,0,104,43,526
+New Mexico,102,0,109,15,226
+New York,1884,0,410,253,2547
+North Carolina,542,0,289,83,914
+North Dakota,186,0,122,31,339
+Ohio,998,1,297,76,1372
 Oklahoma,74,0,22,10,106
-Oregon,341,0,84,30,455
-Pennsylvania,1614,1,389,60,2064
-Puerto Rico,5,0,3,5,13
-Rhode Island,50,0,8,0,58
-South Carolina,100,0,35,20,155
-South Dakota,132,0,52,19,203
-Tennessee,78,0,48,28,154
-Texas,710,2,246,61,1019
-Utah,150,0,43,9,202
-Vermont,877,0,194,37,1108
-Virginia,269,0,124,38,431
-Washington,122,0,29,4,155
+Oregon,339,0,86,30,455
+Pennsylvania,1613,1,382,60,2056
+Puerto Rico,6,0,3,5,14
+Rhode Island,52,0,9,0,61
+South Carolina,98,0,35,20,153
+South Dakota,131,0,56,19,206
+Tennessee,76,0,53,28,157
+Texas,702,2,253,61,1018
+Utah,150,0,42,9,201
+Vermont,874,0,194,37,1105
+Virginia,267,0,125,38,430
+Washington,125,0,29,4,158
 West Virginia,46,0,29,8,83
-Wisconsin,1737,1,515,188,2441
-Wyoming,74,0,20,7,101
-All,23657,20,7243,2217,33137
+Wisconsin,1722,1,538,189,2450
+Wyoming,72,0,20,8,100
+All,23604,20,7333,2223,33180

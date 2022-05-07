@@ -14,6 +14,7 @@ import joblib
 
 # Set file path variables
 static = "integrity_app/static/"
+static_r = "integrity_app" + sep + "static" + sep
 static_img = "integrity_app/static/images/"
 KEY_PATH = "C:\\Users\\daniel\\Documents\\organic_env\\authentication\\api_keys.csv"
 
@@ -455,7 +456,7 @@ def us_process():
         plt.savefig(static_img + "us_certification_count.png", bbox_inches="tight", pad_inches=0.3)
 
         # Save US trend data for use in US forecasting route.
-        trend_df.to_csv(static + "us_trend_data.csv", index=False)
+        trend_df.to_csv(static + "us_trend_data.csv", index=True)
 
         return "The United States view data was processed!"
 
@@ -585,16 +586,29 @@ def us_forecasting_process():
         if auth != key_get("integrity_app_process", file=KEY_PATH):
             return jsonify({"message": "ERROR: Unauthorized"}), 401
         else:
+                # Get the first of each month from a given starting timestamp for the number in months.
+            def month_accumulate(start_month, num_months):
+                month_list = list()
+                temp = start_month
+                for i in range(0,num_months):
+                    next_month = temp + datetime.timedelta(days=32)
+                    day_subtract = next_month.day - 1
+                    next_month = next_month - datetime.timedelta(days=day_subtract)
+                    month_list.append(next_month)
+                    temp = next_month
+                return month_list
 
             # Read in the saved model.
-            us_forecast = joblib.load(file_path+"us_certification_forecast_model.pkl")
-
+            us_forecast = joblib.load(static_r + "us_certification_forecast_model.pkl")
             # Read in data calculated by US view.
             try:
-                trend_df = pd.read_csv(static + "us_trend_data.csv")
+                trend_df = pd.read_csv(static_r + "us_trend_data.csv")
             except FileNotFoundError:
                 return jsonify({"message": "ERROR: us_process must be run at least once before this process. Please POST to us_process"}), 400
 
+            # Format and set index as datetime.
+            trend_df["op_statusEffectiveDate"] = trend_df["op_statusEffectiveDate"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d"))
+            trend_df = trend_df.set_index("op_statusEffectiveDate")
             # Use trend data for time series forecasting.
             trend = trend_df.Trend
 
@@ -608,8 +622,7 @@ def us_forecasting_process():
 
             # Remove data from before the last date that the model was previously trained on.
             # Get a record of the last date used to train the model.
-            file_path = "C:\\Users\\daniel\\Documents\\organic_env\\organic_integrity_flask\\processing\\"
-            with open(file_path+"us_certification_forecast_model.json", 'r') as file:
+            with open(static_r+"us_certification_forecast_model.json", 'r') as file:
                 last_trained_date = json.load(file)
                 
             last_trained_date = datetime.datetime.strptime(last_trained_date["date"], "%Y-%m-%d")
@@ -625,40 +638,40 @@ def us_forecasting_process():
             trends = trends.reset_index()
             trends["Month"] = trends.op_statusEffectiveDate.apply(lambda x: datetime.datetime.strftime(x, "%Y-%m"))
             trends = trends.groupby("Month", as_index=False)["Trend"].sum()
+            trends["Year"] = trends["Month"].apply(lambda x: x.split("-")[0])
+            trends["Month"] = trends["Month"].apply(lambda x: x.split("-")[1])
 
             trends["Shift_Back_1"] = trends["Trend"]
-
             trends.Shift_Back_1 = trends.Shift_Back_1.shift(1)
-
             trends["Shift_Back_2"] = trends.Shift_Back_1.shift(1)
-
             trends["Shift_Back_3"] = trends.Shift_Back_1.shift(2)
 
+            trends["Date"] = trends["Year"] + "-" + trends["Month"] + "-01"
+
             # Reorganize the columns.
-            trends = trends[["Year", "Month", "Shift_Back_3", "Shift_Back_2", "Shift_Back_1", "Trend"]]
+            trends = trends[["Year", "Month", "Shift_Back_3", "Shift_Back_2", "Shift_Back_1", "Trend", "Date"]]
 
             trends = trends.dropna()
 
-            new_history = trends.loc[trends.index > last_trained_date]
-
             # If there is new data, retrain the model on all data.
             # This approach may be modified later.
+            new_history = trend.loc[trend.index > last_trained_date]
             if len(new_history) > 0:
                 # Save the previous model.
                 model_name = "us_certification_forecast_model"
                 model_extension = ".pkl"
                 current = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H-%M-%S")
-                joblib.dump(us_forecast,file_path + model_name + current + model_extension)
+                joblib.dump(us_forecast,static + model_name + current + model_extension)
 
                 trend_vals = trends.values
 
                 hist_x = trend_vals[:, :-2]
-                hist_y = trend_vals[:, -1]
+                hist_y = trend_vals[:, -2]
 
                 # Fit the data on the model.
                 us_forecast.fit(hist_x, hist_y)
                 
-                joblib.dump(us_forecast,file_path + model_name + model_extension)
+                joblib.dump(us_forecast,static + model_name + model_extension)
 
                 # For future predictions, get a record of the last date the model was trained on.
                 last_date = str(current - datetime.timedelta(days=1))
@@ -666,14 +679,14 @@ def us_forecasting_process():
                 last_date = last_date[0:10]
 
                 last_date = {"date": last_date}
-                with open(file_path+"us_certification_forecast_model.json", 'w') as file:
+                with open(static+"us_certification_forecast_model.json", 'w') as file:
                     json.dump(last_date, file)
 
                 max_date = last_date
 
             else:
                 # Get last date from file.
-                with open(file_path+"us_certification_forecast_model.json", 'r') as file:
+                with open(static_r+"us_certification_forecast_model.json", 'r') as file:
                         max_date = json.load(file)
 
 
@@ -780,15 +793,3 @@ def us_forecasting_process():
 
 
         return "The US forecasting view data was processed!"
-
-    # Get the first of each month from a given starting timestamp for the number in months.
-def month_accumulate(start_month, num_months):
-    month_list = list()
-    temp = start_month
-    for i in range(0,num_months):
-        next_month = temp + datetime.timedelta(days=32)
-        day_subtract = next_month.day - 1
-        next_month = next_month - datetime.timedelta(days=day_subtract)
-        month_list.append(next_month)
-        temp = next_month
-    return month_list
