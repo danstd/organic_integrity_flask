@@ -6,7 +6,7 @@ from os import sep
 
 # Set file path variables
 # Having issues with path recognition on pythonanywhere.
-if sys.platform() != "win32":
+if sys.platform != "win32":
     STATIC = "integrity_app" + sep + "static" + sep
     STATIC_IMG = "integrity_app" + sep + "static" + sep + "images" + sep
 else:
