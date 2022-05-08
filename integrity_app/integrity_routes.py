@@ -5,8 +5,13 @@ import datetime
 from os import sep
 
 # Set file path variables
-static = "integrity_app" + sep + "static" + sep
-static_img = "integrity_app" + sep + "static" + sep + "images" + sep
+# Having issues with path recognition on pythonanywhere.
+if sys.platform() != "win32":
+    STATIC = "integrity_app" + sep + "static" + sep
+    STATIC_IMG = "integrity_app" + sep + "static" + sep + "images" + sep
+else:
+    STATIC = "/home/ddavis11/mysite/integrity_app/static/"
+    STATIC_IMG = "/home/ddavis11/mysite/integrity_app/static/images/"    
 
 #app = Flask(__name__)
 #app.debug = True
@@ -27,9 +32,9 @@ def world():
         return render_template("main_page.html")
     else:
         # Get saved images and csv files.
-        country_table = pd.read_csv(static + "op_status_country.csv")
+        country_table = pd.read_csv(STATIC + "op_status_country.csv")
 
-        scopes_count = pd.read_csv(static + "scopes_count.csv")
+        scopes_count = pd.read_csv(STATIC + "scopes_count.csv")
         scope_card_keys = scopes_count.columns.to_list()
         scope_card_vals = scopes_count.values.tolist()
         
@@ -38,7 +43,7 @@ def world():
         for i in range(0,len(scope_card_keys)):
             scope_cards[scope_card_keys[i]] = scope_card_vals[0][i]
 
-        scope_set = pd.read_csv(static + "scopes_combo.csv")
+        scope_set = pd.read_csv(STATIC + "scopes_combo.csv")
         scope_set = scope_set.fillna("")
         # This should not be necessary but there are issues with rounding on pythonanywhere.
         scope_set["Percentage"] = round(scope_set["Percentage"],3)
@@ -60,10 +65,10 @@ def united_states():
     else:
         # Get saved images and csv files.
 
-        us_pivot = pd.read_csv(static + "us_table.csv")
+        us_pivot = pd.read_csv(STATIC + "us_table.csv")
         us_pivot = us_pivot.fillna("")
 
-        us_scopes_return = pd.read_csv(static + "us_scopes_return.csv", dtype=str)
+        us_scopes_return = pd.read_csv(STATIC + "us_scopes_return.csv", dtype=str)
         # Must fix formatting
         for i in us_scopes_return.columns.to_list():
             us_scopes_return[i] = us_scopes_return[i].str.replace(".0","",regex=False)
@@ -84,14 +89,14 @@ def products():
     if request.method != "GET":
         return render_template("main_page.html")
     else:
-        top_items_crops = pd.read_csv(static + "top_items_crops.csv").values.tolist()
-        top_items_livestock = pd.read_csv(static + "top_items_livestock.csv").values.tolist()
-        top_items_handling = pd.read_csv(static + "top_items_handling.csv").values.tolist()
-        top_items_wild = pd.read_csv(static + "top_items_wild.csv").values.tolist()
+        top_items_crops = pd.read_csv(STATIC + "top_items_crops.csv").values.tolist()
+        top_items_livestock = pd.read_csv(STATIC + "top_items_livestock.csv").values.tolist()
+        top_items_handling = pd.read_csv(STATIC + "top_items_handling.csv").values.tolist()
+        top_items_wild = pd.read_csv(STATIC + "top_items_wild.csv").values.tolist()
 
-        top_by_country = pd.read_csv(static + "top_by_country.csv").values.tolist()
+        top_by_country = pd.read_csv(STATIC + "top_by_country.csv").values.tolist()
 
-        top_by_country_scope = pd.read_csv(static + "top_by_country_scope.csv")
+        top_by_country_scope = pd.read_csv(STATIC + "top_by_country_scope.csv")
         top_by_country_scope.fillna("",inplace=True)
         top_by_country_scope=top_by_country_scope.values.tolist()
         
