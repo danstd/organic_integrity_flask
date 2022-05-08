@@ -103,4 +103,14 @@ def products():
             top_items_wild=top_items_wild,
             top_by_country=top_by_country,
             top_by_country_scope=top_by_country_scope)
+
+
+#----------------------united_states route---------------------
+@app.route("/us_forecasting", methods=["GET"])
+def us_forecasting():
+    if request.method != "GET":
+        return render_template("main_page.html")
+    else:
+        
+        return render_template("us_forecasting.html")
             
