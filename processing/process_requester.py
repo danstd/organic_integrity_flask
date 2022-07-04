@@ -41,3 +41,10 @@ res = requests.post(url, headers=headers)
 if res.status_code != 200:
     print("Unsuccessful request for Products view")
 else: print(res.text)
+
+# Process US forecasting view.
+url = "http://127.0.0.1:5000/us_forecast_process"
+res = requests.post(url, headers=headers)
+if res.status_code != 200:
+    print("Unsuccessful request for US forecast view")
+else: print(res.text)

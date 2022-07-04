@@ -661,23 +661,21 @@ def us_forecasting_process():
                 model_name = "us_certification_forecast_model"
                 model_extension = ".pkl"
                 current = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H-%M-%S")
-                joblib.dump(us_forecast,static + model_name + current + model_extension)
+                joblib.dump(us_forecast, static + model_name + " " + current + model_extension)
 
                 trend_vals = trends.values
 
-                hist_x = trend_vals[:, :-2]
+                hist_x = trend_vals[:, 3:-2]
                 hist_y = trend_vals[:, -2]
 
                 # Fit the data on the model.
                 us_forecast.fit(hist_x, hist_y)
                 
-                joblib.dump(us_forecast,static + model_name + model_extension)
+                joblib.dump(us_forecast, static + model_name + model_extension)
 
                 # For future predictions, get a record of the last date the model was trained on.
-                last_date = str(current - datetime.timedelta(days=1))
-                # Cut out time portion.
-                last_date = last_date[0:10]
-
+                #last_date = datetime.datetime.strftime((datetime.date.today() - datetime.timedelta(days=1)), "%Y-%m-%d")
+                last_date = datetime.datetime.strftime(datetime.date.today(), "%Y-%m-%d")
                 last_date = {"date": last_date}
                 with open(static+"us_certification_forecast_model.json", 'w') as file:
                     json.dump(last_date, file)
@@ -693,11 +691,19 @@ def us_forecasting_process():
             # Get the last month in the series.
             pred_month = max_date["date"]
             pred_month_dt = datetime.datetime.strptime(pred_month, "%Y-%m-%d")
+            
+            pred_month_start = str(pred_month_dt.year) + "-" + str(pred_month_dt.month) + "-" + "01"
+            
+            # check if there is any data for the current month.
+            if len(trends.loc[trends["Date"] == pred_month_start]) == 0:
+                pred_month_dt = pred_month_dt - datetime.timedelta(days=31)
+                pred_month_start = str(pred_month_dt.year) + "-" + str(pred_month_dt.month) + "-" + "01"
+
             upcoming_months = month_accumulate(pred_month_dt, 6)
 
             # Get the last value in the dataset.
-            last_month = trends.loc[trends["Date"] == pred_month].values[0]
-
+            last_month = trends.loc[trends["Date"] ==  max(trends["Date"])].values[0]
+    
             # Predict for the next months.
             predictions = list()
             for pred_date in upcoming_months:
